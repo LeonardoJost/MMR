@@ -1,0 +1,15 @@
+﻿<b>Ende der Übungseinheit</b>
+
+Die Übungseinheit ist nun zu Ende.
+Ihnen werden nun 10 Minuten lang wieder mentale Rotationsaufgaben gezeigt.
+Die Figuren ändern ihre Position nicht mehr.
+
+Antworten sie so schnell wie möglich, aber machen sie möglichst wenig Fehler.
+
+Sie erhalten nach jeder Aufgabe Feedback, 
+ob Ihre Antwort richtig oder falsch war. (F1 - richtig, F2 - falsch)
+
+Wenn Sie zwischen den Aufgaben ein Pedal gedrückt halten, erscheint ein FX in der
+Mitte des Bildschirms, bis Sie die Pedalen loslassen.
+
+(Continue)Drücken Sie das linke oder rechte Pedal um fortzufahren.

@@ -1,0 +1,25 @@
+﻿<b>Experiment Mentale Rotation</b>
+
+Im Folgenden werden Ihnen verschiedene Würfelfiguren präsentiert.
+Oben links und oben rechts sehen Sie zwei Figuren, die zueinander gespiegelt sind.
+In der Mitte sehen Sie eine dritte Figur, 
+die durch eine Rotation in eine der beiden oberen überführt werden kann.
+
+Falls es die linke Figur ist, drücken Sie das <b>linke Fußpedal</b>.
+
+Falls es die rechte Figur ist, drücken Sie das <b>rechte Fußpedal</b>.
+
+Sie müssen die Pedalen ca. ein Viertel des Weges eindrücken um eine Antwort auszulösen.
+
+Legen Sie Ihren linken Fuß auf das linke Pedal und
+Ihren rechten Fuß auf das rechte Pedal.
+
+Antworten sie so schnell wie möglich, aber machen sie möglichst wenig Fehler.
+
+Der erste Teil dauert 10 Minuten und Sie erhalten nach jeder Aufgabe Feedback, 
+ob Ihre Antwort richtig oder falsch war. (F1 - richtig, F2 - falsch)
+
+Wenn Sie zwischen den Aufgaben ein Pedal gedrückt halten, erscheint ein FX in der
+Mitte des Bildschirms, bis Sie die Pedalen loslassen.
+
+(Continue)Drücken Sie das linke oder rechte Pedal um fortzufahren.

@@ -1,0 +1,15 @@
+﻿<b>Übungseinheit</b>
+
+Nun folgt eine Übungseinheit. Sie können mit dem Lenkrad die mittlere Figur drehen.
+Drehen Sie mit dem Lenkrad die Figur, bis sie mit einer der Vergleichsfiguren übereinstimmt.
+Erst dann können Sie eine Antwort mit den Pedalen geben.
+
+Lassen Sie nach Ihrer Antwort das Lenkrad los, um es in die neutrale Position zurückzuführen.
+
+Wenn Sie zwischen den Aufgaben ein Pedal gedrückt halten oder das Lenkrad gedreht halten, erscheint ein FX in der
+Mitte des Bildschirms, bis Sie die Pedalen loslassen und das Lenkrad in der neutralen Position ist.
+
+Der Übungsteil dauert 30 Minuten und Sie erhalten nach jeder Aufgabe Feedback, 
+ob Ihre Antwort richtig oder falsch war. (F1 - richtig, F2 - falsch)
+
+(Continue)Drücken Sie das linke oder rechte Pedal um fortzufahren.

@@ -1,0 +1,14 @@
+﻿<b>Übungseinheit</b>
+
+Nun folgt eine Übungseinheit. Die mittlere Figur wird sich nach einer kurzen Zeit drehen,
+bis sie mit einer Vergleichsfigur übereinstimmt.
+Drücken Sie dann das Pedal entsprechend der übereinstimmenden Figur.
+Erst wenn die Drehung zu Ende ist können Sie eine Antwort mit den Pedalen geben.
+
+Wenn Sie zwischen den Aufgaben ein Pedal gedrückt halten, erscheint ein FX in der
+Mitte des Bildschirms, bis Sie die Pedalen loslassen.
+
+Der Übungsteil dauert 30 Minuten und Sie erhalten nach jeder Aufgabe Feedback, 
+ob Ihre Antwort richtig oder falsch war. (F1 - richtig, F2 - falsch)
+
+(Continue)Drücken Sie das linke oder rechte Pedal um fortzufahren.

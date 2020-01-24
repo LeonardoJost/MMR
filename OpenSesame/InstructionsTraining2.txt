@@ -1,0 +1,15 @@
+﻿<b>Übungseinheit</b>
+
+Nun folgt eine Übungseinheit. Sie können mit den Knöpfen am Lenkrad die mittlere Figur drehen.
+Drücken Sie gleichzeitig die Buttons L2 (oben links) und R2 (oben rechts), um die Figur gegen den Uhrzeigersinn zu drehen.
+Drücken Sie gleichzeitig die Buttons SE (unten links) und ST (unten rechts), um die Figur mit dem Uhrzeigersinn zu drehen.
+Drehen Sie die mittlere Figur, bis sie mit einer der Vergleichsfiguren übereinstimmt.
+Erst dann können Sie eine Antwort mit den Pedalen geben.
+
+Wenn Sie zwischen den Aufgaben ein Pedal gedrückt halten, erscheint ein FX in der
+Mitte des Bildschirms, bis Sie die Pedalen loslassen.
+
+Der Übungsteil dauert 30 Minuten und Sie erhalten nach jeder Aufgabe Feedback, 
+ob Ihre Antwort richtig oder falsch war. (F1 - richtig, F2 - falsch)
+
+(Continue)Drücken Sie das linke oder rechte Pedal um fortzufahren.
