@@ -30,13 +30,13 @@ dir.create("figs/MR/accData/")
 ##options, parameters
 options(digits=6)
 #set data folder
-folder="testData\\OpenSesame\\"
+folder="data\\Logfiles\\"
 verbose=3 #detail of output
-experimentalSoftware="OpenSesame" #"OpenSesame" or "Presentation"
+experimentalSoftware="OpenSesame" #"OpenSesame", no support for presentation atm
 questionaireOutFile="output\\questionaire" #.csv added at end, leave empty if no output desired
 handednessGraphFile="figs\\HandednessMW.png" #leave empty if no output desired
 outlierFactor=3 #factor of sd to define outliers in MR
-block="main"#name of intersting block of data
+block=c("preTest","training","postTest")#name of intersting block of data
 questionaireDataCols=c("ID","Gender","Experience") #which questionaire columns shall be kept for statistical analysis
 
 ##read and write data
@@ -63,17 +63,5 @@ write.table(dataset,file="output\\dataset.csv",sep=";", col.names=NA)
 #rename interesting variable to cond and generate plots
 dataset$cond=dataset$correctSide
 generateTableAndGraphsForCondition(dataset,"side")
-dataset$cond=paste(dataset$correctSide,dataset$axis,sep="*")
-generateTableAndGraphsForCondition(dataset,"sideXaxis")
-dataset$cond=paste(dataset$correctSide,dataset$orientation,sep="*")
-generateTableAndGraphsForCondition(dataset,"sideXorientation")
-dataset$cond=dataset$modelNumber
-generateTableAndGraphsForCondition(dataset,"modelNumber")
-dataset$cond=as.factor(dataset$deg)
-generateTableAndGraphsForCondition(dataset,"deg",FALSE)
-dataset$cond=paste(dataset$deg,dataset$correctSide,sep="*")
-generateTableAndGraphsForCondition(dataset,"degXside",FALSE)
-dataset$cond=dataset$direction
-generateTableAndGraphsForCondition(dataset,"direction")
-dataset$cond=paste(dataset$direction,dataset$axis,sep="*")
-generateTableAndGraphsForCondition(dataset,"directionXaxis")
+dataset$cond=paste(dataset$correctSide,dataset$axis,dataset$block,sep="*")
+generateTableAndGraphsForCondition(dataset,"sideXaxisXblock")

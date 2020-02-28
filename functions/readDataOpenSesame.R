@@ -62,7 +62,7 @@ modifyOpenSesameMRData=function(verbose,MRData,outlierFactor) {
   }
   MRData$type=ifelse(MRData$correct==1,"hit","incorrect")
   MRData$typeOutlier=ifelse(MRData$outlier,paste(toChar(MRData$type),"Outlier",sep=""),toChar(MRData$type))
-  MRData$correctSide=ifelse(MRData$correct_response==1,"left","right")
+  MRData$correctSide=MRData$correct_response
   MRData$modelNumber=paste("m",stringToNum(MRData$model),sep="")
   MRData$absTime=MRData$duration
   #save original degrees of rotation

@@ -15,7 +15,6 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 source("functions/helpers.R")
-source("functions/readDataPresentation.R", encoding="utf-8")
 source("functions/readDataOpenSesame.R", encoding="utf-8")
 source("functions/calculateData.R", encoding="utf-8")
 
@@ -27,12 +26,7 @@ getQuestionaireData=function(experimentalSoftware,verbose,folder){
   if (verbose>1) {
     print("Reading questionaire data from files ...")
   }
-  if (experimentalSoftware=="OpenSesame") {
-    questionaireData=getOpenSesameQuestionaireData(verbose,folder, preText="", part="questionaire",ending="csv")
-  }
-  if (experimentalSoftware=="Presentation") {
-    questionaireData=getPresentationQuestionaireData(verbose,folder)
-  }
+  questionaireData=getOpenSesameQuestionaireData(verbose,folder, preText="", part="questionaire",ending="csv")
   if (verbose>1) {
     print(paste("Questionaire data from",nrow(questionaireData),"participants was read."))
   }
@@ -48,12 +42,7 @@ getMRData=function(experimentalSoftware,verbose,folder,block="main"){
   if (verbose>1) {
     print(paste("Reading mental rotation data for block",block,"from files"))
   }
-  if (experimentalSoftware=="OpenSesame") {
-    MRData=getOpenSesameMRData(verbose,folder,part=block)
-  }
-  if (experimentalSoftware=="Presentation") {
-    MRData=getPresentationMRData(verbose,folder,block)
-  }
+  MRData=getOpenSesameMRData(verbose,folder,part=block)
   if (verbose>1) {
     print(paste("Mental rotation data from",length(unique(MRData$ID)),"participants was read. (",nrow(MRData),"trials in total)"))
   }
@@ -67,12 +56,7 @@ modifyQuestionaireData=function(experimentalSoftware,questionaireData) {
   if (verbose>1) {
     print("Doing calculations on questionaire data ...")
   }
-  if (experimentalSoftware=="OpenSesame") {
-    questionaireData=modifyOpenSesameQuestionaireData(questionaireData)
-  }
-  if (experimentalSoftware=="Presentation") {
-    questionaireData=modifyPresentationQuestionaireData(questionaireData)
-  }
+  questionaireData=modifyOpenSesameQuestionaireData(questionaireData)
   if (verbose>1) {
     print("Calculations on questionaire data finished.")
   }
@@ -88,29 +72,24 @@ modifyMRData=function(experimentalSoftware,verbose,MRData,outlierFactor) {
   if (verbose>1) {
     print("Doing calculations on mental rotation data ...")
   }
-  if (experimentalSoftware=="OpenSesame") {
-    MRData=modifyOpenSesameMRData(verbose,MRData,outlierFactor)
-    #name end for each stimulus
-    MRData$endTime=MRData$duration+MRData$reactionTime #use time_Stimulus instead of duration to account for framerate of monitor?
-  }
-  if (experimentalSoftware=="Presentation") {
-    MRData=modifyPresentationMRData(verbose,MRData,outlierFactor)
-    #name end for each stimulus
-    MRData$endTime=MRData$absTime
-  }
+  MRData=modifyOpenSesameMRData(verbose,MRData,outlierFactor)
+  #name end for each stimulus
+  MRData$endTime=MRData$duration+MRData$reactionTime #use time_Stimulus instead of duration to account for framerate of monitor?
   #sort data by endTime
   MRData=MRData[order(MRData$ID,MRData$endTime),]
   #name startTime for each stimulus
   MRData$startTime=MRData$endTime-MRData$reactionTime
   #calculate time between end of stimulus and start of next stimulus
   MRData$pauseTime=NA
-  for (thisID in levels(as.factor(MRData$ID))) {
-    MRDataWithThisID=MRData[which(MRData$ID==thisID),]
+  #combine id and block for calculation of break time
+  MRData$IDblock=paste(MRData$ID,MRData$block,sep="")
+  for (thisID in levels(as.factor(MRData$IDblock))) {
+    MRDataWithThisID=MRData[which(MRData$IDblock==thisID),]
     MRDataWithThisID$pauseTime=NA
     MRDataWithThisID$pauseTime[2:nrow(MRDataWithThisID)]=
       (MRDataWithThisID$startTime[2:nrow(MRDataWithThisID)]
        -MRDataWithThisID$endTime[1:(nrow(MRDataWithThisID)-1)])
-    MRData$pauseTime[which(MRData$ID==thisID)]=MRDataWithThisID$pauseTime
+    MRData$pauseTime[which(MRData$IDblock==thisID)]=MRDataWithThisID$pauseTime
     if (verbose>2)
       print(paste("break time for ID ", thisID, 
                   " mean: ",mean(MRDataWithThisID$pauseTime,na.rm=T),

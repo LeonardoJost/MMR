@@ -45,12 +45,17 @@ toChar=function(vec) {
 #if ranges are entered using "-" (e.g. 1-2), return mean
 stringToNum=function(vec){
   vec=toChar(vec)
+  vec=gsub("min","/60",vec)
   vec=gsub("[[:alpha:]]+", "", vec)
   vec=gsub(",",".",vec)
   for (i in 1:length(vec)) {
     if (grepl("-",paste(vec[i]))) {
       temp=unlist(strsplit(paste(vec[i]),split='-'))
       vec[i]=(as.numeric(temp[1])+as.numeric(temp[2]))/2
+    }
+    if (grepl("/",paste(vec[i]))) {
+      temp=unlist(strsplit(paste(vec[i]),split='/'))
+      vec[i]=as.numeric(temp[1])/as.numeric(temp[2])
     }
   }
   return(as.numeric(vec))

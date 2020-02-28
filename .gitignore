@@ -38,3 +38,9 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 .Rproj.user
+
+#raw data
+data
+
+# openSesame file pool
+__pool__
