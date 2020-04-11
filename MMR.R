@@ -1,5 +1,5 @@
 ### main program
-#     Copyright (C) 2019  Leonardo Jost
+#     Copyright (C) 2020  Leonardo Jost
 # 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -55,6 +55,9 @@ dataset=merge(MRData,questionaireData,by="ID")
 #anonymise IDs to protect participant identity
 dataset$ID=as.factor(dataset$ID)
 levels(dataset$ID)=paste("id",sample.int(length(levels(dataset$ID))),sep="")
+
+#set groupnames by trainingtype
+dataset$group=ifelse(dataset$trainingType==1,"wheel",ifelse(dataset$trainingType==2,"buttons","visual"))
 
 #save full dataset to csv
 write.table(dataset,file="output\\dataset.csv",sep=";", col.names=NA)

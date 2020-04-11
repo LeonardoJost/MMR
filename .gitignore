@@ -42,5 +42,9 @@ vignettes/*.pdf
 #raw data
 data
 
+#recreatable output
+output
+figs
+
 # openSesame file pool
 __pool__
