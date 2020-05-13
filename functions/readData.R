@@ -1,5 +1,5 @@
 ### Read mental rotation data
-#     Copyright (C) 2019  Leonardo Jost
+#     Copyright (C) 2020  Leonardo Jost
 # 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
