@@ -30,6 +30,9 @@ myData=myData[which(myData$block!="training"),]
 myData[which(myData$endTime>10.1),]
 #subtract 10 minutes from preTest times to set transition between tests to 0
 myData[which(myData$block=="preTest"),"endTime"]=myData[which(myData$block=="preTest"),"endTime"]-10
+#separate rotation angle by axis
+myData$degY=myData$deg*(myData$axis=="y")
+myData$degZ=myData$deg*(myData$axis=="z")
 
 #dataset for analysis
 datasetAnalysis=myData

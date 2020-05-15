@@ -22,144 +22,17 @@ source("functions/helpers.R")
 datasetForLMM=datasetAnalysis
 #scaling
 datasetForLMM$deg=datasetForLMM$deg/100
+datasetForLMM$degY=datasetForLMM$degY/100
+datasetForLMM$degZ=datasetForLMM$degZ/100
 datasetForLMM$endTime=datasetForLMM$endTime/30 #30 minutes (time is already in minutes)
 #prepare dataset
 dataset.noOutlier=datasetForLMM[which(!datasetForLMM$outlier),]
-dataset.noOutlier$deg=dataset.noOutlier$deg-mean(dataset.noOutlier$deg) #center degree
 dataset.acc=dataset.noOutlier
 dataset.rt=dataset.noOutlier[which(dataset.noOutlier$typeOutlier=="hit"),]
-dataset.rt$deg=dataset.rt$deg-mean(dataset.rt$deg) #center degree
-#normalizing time and centering degree are necessary to analyze main effects of partial interaction (block*group) when higher-
-#order interactions are present (deg*block*group+time*block*group). Main effects are calculated for value 0
-#0 of degree: average effect due to centering (this is "standard" main effect of removing higher order interaction)
+#normalizing time is necessary to analyze main effects of partial interaction (block*group) when higher-
+#order interactions are present (time*block*group). Main effects are calculated for value 0
 #0 of time: difference between blocks
-dataset.posttest=dataset.rt[which(dataset.rt$block=="postTest"),]
-
-#model generation
-#remove random correlation
-m1=lmer(reactionTime~deg*endTime*block*group+deg*endTime*correct_response+Gender*block+Experience*block+
-          (deg+endTime+block+correct_response+
-             deg*endTime+deg*block+deg*correct_response+
-             endTime*block+endTime*correct_response+
-             block*correct_response||ID)+
-          (deg+endTime+block+correct_response+Gender+Experience+group||modelNumber),
-        data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
-print(summary(m1),corr=FALSE)
-summary(rePCA(m1))
-VarCorr(m1)
-#remove all effects with correlation <-.95,>.95 or NaN
-m2=lmer(reactionTime~deg*endTime*block*group+deg*endTime*correct_response+Gender*block+Experience*block+
-          (deg+endTime+block+
-             deg*endTime+deg*block+
-             endTime*block+
-             block*correct_response||ID)+
-          (deg||modelNumber),
-        data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
-print(summary(m2),corr=FALSE)
-summary(rePCA(m2))
-VarCorr(m2)
-#remove all effects with correlation <-.95,>.95 or NaN
-m3=lmer(reactionTime~deg*endTime*block*group+deg*endTime*correct_response+Gender*block+Experience*block+
-          (deg+endTime+block+
-             deg*endTime+
-             endTime*block||ID)+
-          (deg||modelNumber),
-        data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
-print(summary(m3),corr=FALSE)
-summary(rePCA(m3))
-VarCorr(m3)
-anova(m2,m3)
-#remove all effects with correlation <-.95,>.95 or NaN
-m4=lmer(reactionTime~deg*endTime*block*group+deg*endTime*correct_response+Gender*block+Experience*block+
-          (deg+endTime+block+
-             deg*endTime||ID)+
-          (deg||modelNumber),
-        data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
-print(summary(m4),corr=FALSE)
-summary(rePCA(m4))
-VarCorr(m4)
-#readd random correaltion
-m5=lmer(reactionTime~deg*endTime*block*group+deg*endTime*correct_response+Gender*block+Experience*block+
-          (deg+endTime+block+
-             deg*endTime|ID)+
-          (deg|modelNumber),
-        data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
-print(summary(m5),corr=FALSE)
-summary(rePCA(m5))
-VarCorr(m5)
-#deg|modelNumber shows corr 1
-m6=lmer(reactionTime~deg*endTime*block*group+deg*endTime*correct_response+Gender*block+Experience*block+
-          (deg+endTime+block+
-             deg*endTime|ID)+
-          (1|modelNumber),
-        data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
-print(summary(m6),corr=FALSE)
-summary(rePCA(m6))
-VarCorr(m6)
-anova(m1,m2,m3,m4,m5,m6)
-
-m6a=lmer(reactionTime~deg*endTime*block*group+deg*endTime*correct_response+Gender*block+Experience*block+
-           (deg+endTime+block+
-              deg*endTime|ID)+
-           (0+deg|modelNumber),
-         data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
-print(summary(m6a),corr=FALSE)
-summary(rePCA(m6a))
-VarCorr(m6a)
-anova(m5,m6,m6a)
-#m6 is better than m6a. m5 is not used although it is best because pca shows component variance 0
-
-#stepwise remove nonsignificant effects
-m6.summary=modelSummary(m6,0)
-#split deg*time*side
-m7=lmer(reactionTime~deg*endTime*block*group+Gender*block+Experience*block+
-          endTime*correct_response+deg*correct_response+
-          (deg+endTime+block+deg*endTime|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
-m7.summary=modelSummary(m7,0)
-#split time*side
-m8=lmer(reactionTime~deg*endTime*block*group+Gender*block+Experience*block+
-          deg*correct_response+
-          (deg+endTime+block+deg*endTime|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
-m8.summary=modelSummary(m8,0)
-#split deg*endTime*block*group
-m9=lmer(reactionTime~endTime*block*group+deg*block*group+deg*endTime*group+deg*endTime*block+
-          Gender*block+Experience*block+deg*correct_response+
-          (deg+endTime+block+deg*endTime|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
-m9.summary=modelSummary(m9,0)
-#split deg*block*group
-m10=lmer(reactionTime~endTime*block*group+deg*endTime*group+deg*endTime*block+
-           Gender*block+Experience*block+deg*correct_response+
-           (deg+endTime+block+deg*endTime|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
-m10.summary=modelSummary(m10,0)
-#split deg*block*time
-m11=lmer(reactionTime~endTime*block*group+deg*endTime*group+deg*block+
-           Gender*block+Experience*block+deg*correct_response+
-           (deg+endTime+block+deg*endTime|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
-m11.summary=modelSummary(m11,0)
-#split group*block*time
-m12=lmer(reactionTime~endTime*block+deg*endTime*group+deg*block+
-           Gender*block+Experience*block+deg*correct_response+
-           (deg+endTime+block+deg*endTime|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
-m12.summary=modelSummary(m12,0)
-#split group*block*time
-m13=lmer(reactionTime~endTime*block+deg*endTime*group+
-           Gender*block+Experience*block+deg*correct_response+
-           (deg+endTime+block+deg*endTime|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
-m13.summary=modelSummary(m13,0)
-#split group*deg*time
-m14=lmer(reactionTime~endTime*block+endTime*group+deg*endTime+deg*group+
-           Gender*block+Experience*block+deg*correct_response+
-           (deg+endTime+block+deg*endTime|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
-m14.summary=modelSummary(m14,0)
-#split group*deg
-m15=lmer(reactionTime~endTime*block+endTime*group+deg*endTime+
-           Gender*block+Experience*block+deg*correct_response+
-           (deg+endTime+block+deg*endTime|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
-m15.summary=modelSummary(m15,0)
-#all significant
-m15.summary=modelSummary(m15)
-plot(m15)
-
+#degree is not centered, as 0 is a meaningful intercept and is necessary to distinguish between axes
 
 
 ##accuracy

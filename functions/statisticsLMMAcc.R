@@ -1,4 +1,4 @@
-### Basics of statistical analysis, have to be adopted on a case by case basis
+### statistical analysis of accuracy
 #     Copyright (C) 2019  Leonardo Jost
 # 
 # This program is free software: you can redistribute it and/or modify
@@ -15,51 +15,27 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-library(plyr)
 library(lme4)
 library(optimx)
+source("functions/helpers.R")
 
-
-#analysis of mental rotation
-#prepare data
-#do not modify original dataset
-datasetForLMM=dataset
-
+#load dataset
+datasetForLMM=datasetAnalysis
 #scaling
 datasetForLMM$deg=datasetForLMM$deg/100
-datasetForLMM$absTime=datasetForLMM$absTime/1800000 #30 minutes= 1000(ms/s)*60(s/min)*30min=1800000
-
-#prepare dataset for reaction Time analysis and accuracy analysis
+datasetForLMM$degY=datasetForLMM$degY/100
+datasetForLMM$degZ=datasetForLMM$degZ/100
+datasetForLMM$endTime=datasetForLMM$endTime/30 #30 minutes (time is already in minutes)
+#prepare dataset
 dataset.noOutlier=datasetForLMM[which(!datasetForLMM$outlier),]
-dataset.rt=dataset.noOutlier[which(dataset.noOutlier$typeOutlier=="hit"),]
 dataset.acc=dataset.noOutlier
-dataset.rt.axis=dataset.rt[which(dataset.rt$deg>0),]
-dataset.acc.axis=dataset.acc[which(dataset.acc$deg>0),]
+dataset.rt=dataset.noOutlier[which(dataset.noOutlier$typeOutlier=="hit"),]
+#normalizing time is necessary to analyze main effects of partial interaction (block*group) when higher-
+#order interactions are present (time*block*group). Main effects are calculated for value 0
+#0 of time: difference between blocks
+#degree is not centered, as 0 is a meaningful intercept and is necessary to distinguish between axes
 
-####adopt individually
-##reaction time (model including axis)
-#base model
-mBase=lmer(reactionTime~fixedEffects+(randomSlopes|ID)+(randomSlopes|modelNumber),data=dataset.rt.axis,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
-mBase.summary=modelSummary(mBase)
-save(mBase,mBase.summary,file="RTModelmBase.RData")
-#split interactions
-
-
-#nonsignificant effects
-
-
-
-##reaction time (model without axis)
-#base model
-
-#split interactions
-
-
-#nonsignificant effects
-
-
-
-##accuracy (model including axis)
+##accuracy
 #base model
 aBase=glmer((type=="hit")~fixedEffects+(randomSlopes|ID)+(randomSlopes|modelNumber),family=binomial(),data=dataset.acc.axis,control = glmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
 aBase.summary=modelSummary(aBase)
@@ -69,14 +45,4 @@ save(aBase,aBase.summary,file="AccModelaBase.RData")
 
 
 #nonsignificant effects
-
-
-##accuracy (model without axis)
-#base model
-
-
-#split interactions
-
-#nonsignificant effects
-
 
