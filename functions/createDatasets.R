@@ -19,7 +19,7 @@ source("functions/helpers.R")
 source("functions/generateGraphsAndTables.R", encoding="utf-8")
 
 #load full dataset
-myData=read.csv(file="output\\dataset.csv",sep=";")
+myData=read.csv(file="dataset\\dataset.csv",sep=";")
 #normalize time to minutes
 myData$endTime=myData$endTime/60000 
 #get pre and posttest data and separate training
@@ -36,6 +36,29 @@ myData$degZ=myData$deg*(myData$axis=="z")
 
 #dataset for analysis
 datasetAnalysis=myData
+#load dataset
+datasetForLMM=datasetAnalysis
+#scaling
+datasetForLMM$deg=datasetForLMM$deg/100
+datasetForLMM$degY=datasetForLMM$degY/100
+datasetForLMM$degZ=datasetForLMM$degZ/100
+datasetForLMM$endTime=datasetForLMM$endTime/30 #30 minutes (time is already in minutes)
+#prepare dataset
+dataset.noOutlier=datasetForLMM[which(!datasetForLMM$outlier),]
+dataset.acc=dataset.noOutlier
+dataset.rt=dataset.noOutlier[which(dataset.noOutlier$typeOutlier=="hit"),]
+#center degree
+dataset.rt$deg=dataset.rt$deg-mean(dataset.rt$deg) 
+dataset.rt$degY=dataset.rt$degY-mean(dataset.rt$degY) 
+dataset.rt$degZ=dataset.rt$degZ-mean(dataset.rt$degZ) 
+dataset.acc$deg=dataset.acc$deg-mean(dataset.acc$deg) 
+dataset.acc$degY=dataset.acc$degY-mean(dataset.acc$degY) 
+dataset.acc$degZ=dataset.acc$degZ-mean(dataset.acc$degZ) 
+#normalizing time is necessary to analyze main effects of partial interaction (block*group) when higher-
+#order interactions are present (time*block*group). Main effects are calculated for value 0
+#0 of time: difference between blocks
+#degree is centered to the mean for every axis (correct main effects for average but not meaningful intercept)
+
 
 #plot block*group interaction over time for pre/posttest
 myData$cond=paste(myData$group,myData$block,sep="*")
@@ -45,3 +68,11 @@ generateTableAndGraphsForCondition(myData,"datasetTime",TRUE,TRUE,"Group",TRUE)
 #plot groups over time for training
 myDataTraining$cond=myDataTraining$group
 generateTableAndGraphsForCondition(myDataTraining,"TrainingGroup",TRUE,TRUE,"Block")
+
+#plot side differences
+myData$cond=myData$correct_response
+generateTableAndGraphsForCondition(myData,"side")
+
+#plot axis differences
+
+#plot four-way-interaction

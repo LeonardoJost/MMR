@@ -21,48 +21,47 @@ source("functions/helpers.R")
 
 dir.create("statmodels")
 
-#load dataset
-datasetForLMM=datasetAnalysis
-#scaling
-datasetForLMM$deg=datasetForLMM$deg/100
-datasetForLMM$degY=datasetForLMM$degY/100
-datasetForLMM$degZ=datasetForLMM$degZ/100
-datasetForLMM$endTime=datasetForLMM$endTime/30 #30 minutes (time is already in minutes)
-#prepare dataset
-dataset.noOutlier=datasetForLMM[which(!datasetForLMM$outlier),]
-dataset.acc=dataset.noOutlier
-dataset.rt=dataset.noOutlier[which(dataset.noOutlier$typeOutlier=="hit"),]
-#normalizing time is necessary to analyze main effects of partial interaction (block*group) when higher-
-#order interactions are present (time*block*group). Main effects are calculated for value 0
-#0 of time: difference between blocks
-#degree is not centered, as 0 is a meaningful intercept and is necessary to distinguish between axes
-
 ##reaction time
 #base model
-mBase=lmer(reactionTime~degY*endTime*block*group+degZ*endTime+degZ*block+degY*correct_response+degY*endTime+degZ*correct_response+Gender*block+Experience*block+(deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+mBase=lmer(reactionTime~degY*endTime*block*group+
+           degZ*block+
+           deg*correct_response+deg*endTime+
+           Gender*block+Experience*block+
+           (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
 mBase.summary=modelSummary(mBase)
 save(mBase,mBase.summary,file="statmodels/RTmBase.RData")
 ##partial effects of interactions
-#degY*endTime*block*group
-mdegYTimeBlock=lmer(reactionTime~degY*endTime*block*group-degY:endTime:block+
-                           degZ*endTime+degZ*block+degY*correct_response+degY*endTime+degZ*correct_response+Gender*block+Experience*block+(deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
-mdegYTimeBlock.summary=modelSummary(mdegYTimeBlock)
-save(mdegYTimeBlock,mdegYTimeBlock.summary,file="statmodels/RTmdegYTimeBlock.RData")
-#degY*endTime*group
-mdegYTimeGroup=lmer(reactionTime~degY*endTime*block*group-degY:endTime:group+
-                           degZ*endTime+degZ*block+degY*correct_response+degY*endTime+degZ*correct_response+Gender*block+Experience*block+(deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
-mdegYTimeGroup.summary=modelSummary(mdegYTimeGroup)
-save(mdegYTimeGroup,mdegYTimeGroup.summary,file="statmodels/RTmdegYTimeGroup.RData")
+#degY:endTime:block (same model due to splitting of factor parameters in numerical interaction)
+#degY*endTime*group (same model due to splitting of factor parameters in numerical interaction)
+# -> split interaction
+mDegYTimeBlockGroup=lmer(reactionTime~endTime*block*group+degY*block*group+degY*endTime*group+degY*endTime*block+
+             degZ*block+
+             deg*correct_response+deg*endTime+
+             Gender*block+Experience*block+
+             (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+mDegYTimeBlockGroup.summary=modelSummary(mDegYTimeBlockGroup)
+save(mDegYTimeBlockGroup,mDegYTimeBlockGroup.summary,file="statmodels/RTmDegYTimeBlockGroup.RData")
 #degY*block*group
 mdegYBlockGroup=lmer(reactionTime~degY*endTime*block*group-degY:block:group+
-                           degZ*endTime+degZ*block+degY*correct_response+degY*endTime+degZ*correct_response+Gender*block+Experience*block+(deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
-mdegYBlockGroup.summary=modelSummary(mdegYBlockGroup)
-save(mdegYBlockGroup,mdegYBlockGroup.summary,file="statmodels/RTmdegYBlockGroup.RData")
+                       degZ*block+
+                       deg*correct_response+deg*endTime+
+                       Gender*block+Experience*block+
+                       (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+anova(mdegYBlockGroup,mBase)
 #endTime*block*group
 mTimeBlockGroup=lmer(reactionTime~degY*endTime*block*group-endTime:block:group+
-                           degZ*endTime+degZ*block+degY*correct_response+degY*endTime+degZ*correct_response+Gender*block+Experience*block+(deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
-mTimeBlockGroup.summary=modelSummary(mTimeBlockGroup)
-save(mTimeBlockGroup,mTimeBlockGroup.summary,file="statmodels/RTmTimeBlockGroup.RData")
+                       degZ*block+
+                       deg*correct_response+deg*endTime+
+                       Gender*block+Experience*block+
+                       (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+anova(mTimeBlockGroup,mBase)
+#block*group
+mBlockGroup=lmer(reactionTime~degY*endTime*block*group-block:group+
+                       degZ*block+
+                       deg*correct_response+deg*endTime+
+                       Gender*block+Experience*block+
+                       (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+anova(mBlockGroup,mBase)
 #nonsignificant effects
 
 

@@ -18,22 +18,6 @@ library(lme4)
 library(optimx)
 source("functions/helpers.R")
 
-#load dataset
-datasetForLMM=datasetAnalysis
-#scaling
-datasetForLMM$deg=datasetForLMM$deg/100
-datasetForLMM$degY=datasetForLMM$degY/100
-datasetForLMM$degZ=datasetForLMM$degZ/100
-datasetForLMM$endTime=datasetForLMM$endTime/30 #30 minutes (time is already in minutes)
-#prepare dataset
-dataset.noOutlier=datasetForLMM[which(!datasetForLMM$outlier),]
-dataset.acc=dataset.noOutlier
-dataset.rt=dataset.noOutlier[which(dataset.noOutlier$typeOutlier=="hit"),]
-#normalizing time is necessary to analyze main effects of partial interaction (block*group) when higher-
-#order interactions are present (time*block*group). Main effects are calculated for value 0
-#0 of time: difference between blocks
-#degree is not centered, as 0 is a meaningful intercept and is necessary to distinguish between axes
-
 #model generation
 #remove random correlation
 m1=lmer(reactionTime~(degY+degZ)*endTime*block*group+(degY+degZ)*endTime*correct_response+Gender*block+Experience*block+
@@ -116,32 +100,42 @@ anova(m1,m2,m3,m4,m5,m6,m7,m8)
 
 #stepwise remove nonsignificant effects
 m8.summary=modelSummary(m8,0)
-m8a=lmer(reactionTime~deg*endTime*block*group+deg*endTime*correct_response+Gender*block+Experience*block+
-              (deg+endTime+block|ID)+
-              (1|modelNumber),
-            data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+m8a=lmer(reactionTime~deg*endTime*block*group+
+           deg*endTime*correct_response+
+           Gender*block+Experience*block+
+           (deg+endTime+block|ID)+
+           (1|modelNumber),
+         data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
 anova(m8,m8a)
+m8b=lmer(reactionTime~(degY+degZ)*endTime*block*group+
+           deg*endTime*correct_response+
+           Gender*block+Experience*block+
+           (deg+endTime+block|ID)+
+           (1|modelNumber),
+         data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+anova(m8,m8b)
+#use m8b
+m8b.summary=modelSummary(m8b,0)
 #split degZ:endTime:block:group
 m9=lmer(reactionTime~degY*endTime*block*group+
-          endTime*block*group+degZ*block*group+degZ*endTime*group+degZ*endTime*block+
-          (degY+degZ)*endTime*correct_response+
-          Gender*block+Experience*block+
-          (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
-m9.summary=modelSummary(m9,0)
-m9a=lmer(reactionTime~deg*endTime*block*group+
-          endTime*block*group+deg*block*group+deg*endTime*group+deg*endTime*block+
+          degZ*block*group+degZ*endTime*group+degZ*endTime*block+
           deg*endTime*correct_response+
           Gender*block+Experience*block+
           (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+m9.summary=modelSummary(m9,0)
+#merge degZ and degY (merging only in the triple interactions is redundant, as degZ+degY=deg and they are included in the four-way interaction)
+m9a=lmer(reactionTime~deg*endTime*block*group+
+           deg*endTime*correct_response+
+           Gender*block+Experience*block+
+           (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
 anova(m9,m9a)
 #split degZ:block:group
 m10=lmer(reactionTime~degY*endTime*block*group+
            degZ*endTime*group+degZ*endTime*block+
-           (degY+degZ)*endTime*correct_response+
+           deg*endTime*correct_response+
            Gender*block+Experience*block+
            (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
 m10a=lmer(reactionTime~deg*endTime*block*group+
-            deg*endTime*group+deg*endTime*block+
             deg*endTime*correct_response+
             Gender*block+Experience*block+
             (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
@@ -150,94 +144,74 @@ m10.summary=modelSummary(m10,0)
 #split endTime:block:degZ 
 m11=lmer(reactionTime~degY*endTime*block*group+
            degZ*endTime*group+degZ*block+
-           (degY+degZ)*endTime*correct_response+
+           deg*endTime*correct_response+
            Gender*block+Experience*block+
            (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
 m11a=lmer(reactionTime~deg*endTime*block*group+
-            deg*endTime*group+deg*block+
             deg*endTime*correct_response+
             Gender*block+Experience*block+
             (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
 anova(m11,m11a)
 m11.summary=modelSummary(m11,0)
-#split endTime:degZ:correct_response
+#split endTime:degZ:group (keep degZ*endTime for now, in case deg*time*correct is split)
 m12=lmer(reactionTime~degY*endTime*block*group+
-           degZ*endTime*group+degZ*block+
-           degY*endTime*correct_response+
-           degZ*correct_response+
+           #degZ*endTime+
+           degZ*group+
+           degZ*block+
+           deg*endTime*correct_response+
            Gender*block+Experience*block+
            (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
 m12a=lmer(reactionTime~deg*endTime*block*group+
-            deg*endTime*group+deg*block+
-            deg*endTime*correct_response+
-            deg*correct_response+
-            Gender*block+Experience*block+
-            (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+           deg*endTime*correct_response+
+           Gender*block+Experience*block+
+           (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
 anova(m12,m12a)
 m12.summary=modelSummary(m12,0)
-#split degY:endTime:correct_response
+#split degZ:group
 m13=lmer(reactionTime~degY*endTime*block*group+
-           degZ*endTime*group+degZ*block+
-           endTime*correct_response+degY*correct_response+degY*endTime+
-           degZ*correct_response+
+           #degZ*endTime+
+           degZ*block+
+           deg*endTime*correct_response+
            Gender*block+Experience*block+
            (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
 m13a=lmer(reactionTime~deg*endTime*block*group+
-            deg*endTime*group+deg*block+
-            endTime*correct_response+deg*correct_response+deg*endTime+
-            deg*correct_response+
-            Gender*block+Experience*block+
-            (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+           deg*endTime*correct_response+
+           Gender*block+Experience*block+
+           (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
 anova(m13,m13a)
 m13.summary=modelSummary(m13,0)
-#split endTime:correct_response
+#split endTime:deg:correct_response
 m14=lmer(reactionTime~degY*endTime*block*group+
-           degZ*endTime*group+degZ*block+
-           degY*correct_response+degY*endTime+
-           degZ*correct_response+
+           #degZ*endTime+
+           degZ*block+
+           endTime*correct_response+deg*correct_response+deg*endTime+
            Gender*block+Experience*block+
            (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
 m14a=lmer(reactionTime~deg*endTime*block*group+
-            deg*endTime*group+degZ*block+
-            deg*correct_response+deg*endTime+
-            deg*correct_response+
-            Gender*block+Experience*block+
-            (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+           endTime*correct_response+deg*correct_response+
+           Gender*block+Experience*block+
+           (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
 anova(m14,m14a)
 m14.summary=modelSummary(m14,0)
-#split endTime:group:degZ 
+#split endTime:correct_response
 m15=lmer(reactionTime~degY*endTime*block*group+
-           degZ*endTime+degZ*group+
+           #degZ*endTime+
            degZ*block+
-           degY*correct_response+degY*endTime+
-           degZ*correct_response+
+           deg*correct_response+deg*endTime+
            Gender*block+Experience*block+
            (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
 m15a=lmer(reactionTime~deg*endTime*block*group+
-            deg*endTime+deg*group+
-            deg*block+
-            deg*correct_response+deg*endTime+
-            deg*correct_response+
-            Gender*block+Experience*block+
-            (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
-anova(m15,m15a)
-m15.summary=modelSummary(m15,0)
-#split group:degZ
-m16=lmer(reactionTime~degY*endTime*block*group+
-           degZ*endTime+
-           degZ*block+
-           degY*correct_response+degY*endTime+
-           degZ*correct_response+
-           Gender*block+Experience*block+
-           (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
-m16a=lmer(reactionTime~deg*endTime*block*group+
-           deg*endTime+
-           deg*block+
-           deg*correct_response+degY*endTime+
            deg*correct_response+
            Gender*block+Experience*block+
            (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
-anova(m16,m16a)
-m16.summary=modelSummary(m16,0)
-#all significant
-plot(m16)
+anova(m15,m15a)
+m15b=lmer(reactionTime~degY*endTime*block*group+
+           degZ*endTime+
+           degZ*block+
+           deg*correct_response+
+           Gender*block+Experience*block+
+           (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+anova(m15,m15b)
+m15.summary=modelSummary(m15,0)
+#all significant (using degZ*endTime or deg*endTime does not change the model only coefficients of degY*endTime)
+plot(m15)
