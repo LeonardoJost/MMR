@@ -58,7 +58,9 @@ dataset.acc$degZ=dataset.acc$degZ-mean(dataset.acc$degZ)
 #order interactions are present (time*block*group). Main effects are calculated for value 0
 #0 of time: difference between blocks
 #degree is centered to the mean for every axis (correct main effects for average but not meaningful intercept)
-
+#split pre- and posttest data
+dataset.rt.preTest=dataset.rt[which(dataset.rt$block=="preTest"),]
+dataset.rt.postTest=dataset.rt[which(dataset.rt$block=="postTest"),]
 
 #plot block*group interaction over time for pre/posttest
 myData$cond=paste(myData$group,myData$block,sep="*")
