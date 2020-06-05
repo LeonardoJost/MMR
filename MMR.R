@@ -17,6 +17,7 @@
 source("functions/helpers.R")
 source("functions/readData.R", encoding="utf-8")
 source("functions/generateGraphsAndTables.R", encoding="utf-8")
+source("functions/calculateTrainingData.R", encoding="utf-8")
 
 ##create output directories, if they don't exist (outputs warnings otherwise)
 dir.create("figs")
@@ -43,15 +44,19 @@ questionaireDataCols=c("ID","Gender","Experience") #which questionaire columns s
 #read data
 questionaireData=getQuestionaireData(experimentalSoftware,verbose,folder)
 MRData=getMRData(experimentalSoftware,verbose,folder,block)
-#modify data #adapt to own data
+MRDataTraining=getMRData(experimentalSoftware,verbose,folder,"trainingShowStimulus")
+#modify data 
 questionaireData=modifyQuestionaireData(experimentalSoftware,questionaireData)
 MRData=modifyMRData(experimentalSoftware,verbose,MRData,outlierFactor)
 #calculate means from questionaire (and save to csv)
 calculateMeansQuestionaire(verbose,questionaireData,questionaireOutFile,handednessGraphFile)
 #remove not analyzed questionaire data to protect participant identity
 questionaireData=subset(questionaireData,select=questionaireDataCols)
+#summarize training data (too much data otherwise)
+MRDataTraining=summarizeTrainingData(MRDataTraining,verbose)
 #unify data
 dataset=merge(MRData,questionaireData,by="ID")
+dataset=merge(dataset,MRDataTraining,by=c("ID","startTime"),all.x=TRUE)
 #anonymise IDs to protect participant identity
 dataset$ID=as.factor(dataset$ID)
 levels(dataset$ID)=paste("id",sample.int(length(levels(dataset$ID))),sep="")

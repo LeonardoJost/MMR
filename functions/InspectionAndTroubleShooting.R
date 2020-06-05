@@ -45,5 +45,4 @@ for(thisblock in levels(as.factor(dataset$block))){
   print(n_occur)
   n_occur=data.frame(table(datasetPerBlock$deg))
   print(n_occur)
-  
 }
