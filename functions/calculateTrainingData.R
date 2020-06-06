@@ -17,9 +17,8 @@
 source("functions/helpers.R")
 
 #summarize trainingData
-#experimentalSoftware: which software was used to generate data? Presentation or OpenSesame
+#dataset: dataset containing data while stimuli are shown
 #verbose: detail of output
-#folder: folder to search in for data
 summarizeTrainingData=function(dataset,verbose){
   #rename variables
   dataset$deg=toNumeric(dataset$angle)
@@ -32,8 +31,8 @@ summarizeTrainingData=function(dataset,verbose){
   #name startTime for each stimulus
   dataset$startTime=dataset$endTime-dataset$reactionTime
   #create dataset for saving/returning data
-  returnset=data.frame(matrix(nrow=length(unique(paste(dataset$ID,dataset$startTime))), ncol=5), stringsAsFactors = FALSE)
-  names(returnset)=c("ID","startTime","firstDeviationTime","rotationSpeed","numberOfSwitches")
+  returnset=data.frame(matrix(nrow=length(unique(paste(dataset$ID,dataset$startTime))), ncol=6), stringsAsFactors = FALSE)
+  names(returnset)=c("ID","startTime","firstDeviationTime","rotationSpeed","numberOfSwitches","shortDirection")
   if (verbose>1) {
     print(paste("Summarizing training data of", nrow(returnset), "stimuli..."))
   }
@@ -77,8 +76,11 @@ summarizeTrainingData=function(dataset,verbose){
       numberOfSwitches=sum(diff(sign(rotationSteps))!=0)
       #rotation speed from first deviation to finish (in °/s)
       rotationSpeed=1000*(firstAllowedAnswerDegrees-startDegrees)/(firstAllowedAnswerTime-firstDeviationTime)
-      
-      returnset[i,]=list(thisID,thisStartTime,firstDeviationTime,rotationSpeed,numberOfSwitches)
+      #was the rotation in the short direction? (180 undefined -> considered later)
+      shortDirection=FALSE
+      if(sign(startDegrees-180)==sign(rotationSpeed))
+        shortDirection=TRUE
+      returnset[i,]=list(thisID,thisStartTime,firstDeviationTime,rotationSpeed,numberOfSwitches,shortDirection)
       if (verbose>3) {
         print(paste("Stimulus", i, "of", nrow(returnset), "finished."))
       }
@@ -89,6 +91,15 @@ summarizeTrainingData=function(dataset,verbose){
     print("Summarizing training data finished.")
   }
   return(returnset)
+}
+
+#summarizes training data by ID
+#dataset: dataset containing all summarized training stimuli for one id
+summarizeDataByID=function(dataset){
+  dataset$firstDeviationTimeAvgByID=mean(dataset$firstDeviationTime)
+  dataset$rotationSpeedAvgByID=mean(dataset$rotationSpeed)
+  dataset$numberOfSwitchesByID=mean(dataset$numberOfSwitches)
+  return(dataset)
 }
 
 #dataset=MRDataTraining
