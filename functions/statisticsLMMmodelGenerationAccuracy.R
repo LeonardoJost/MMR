@@ -191,15 +191,13 @@ a19=glmer((type=="hit")~degY*endTime*block*group+
             Gender*block+
             (deg+endTime+deg*endTime|ID)+(deg+endTime|modelNumber),family=binomial(),data=dataset.acc,control = glmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
 a19.summary=modelSummary(a19,0)
-<<<<<<< HEAD
 #remove correct_response
 a20=glmer((type=="hit")~degY*endTime*block*group+
             degZ*block+
             Gender*block+
             (deg+endTime+deg*endTime|ID)+(deg+endTime|modelNumber),family=binomial(),data=dataset.acc,control = glmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
 a20.summary=modelSummary(a20,0)
-=======
->>>>>>> 056a5f5c35448860e9e7d1b9f4b99e8bedee5f5b
+
 
 
 
