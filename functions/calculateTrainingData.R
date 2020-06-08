@@ -32,7 +32,8 @@ summarizeTrainingData=function(dataset,verbose){
   dataset$startTime=dataset$endTime-dataset$reactionTime
   #create dataset for saving/returning data
   returnset=data.frame(matrix(nrow=length(unique(paste(dataset$ID,dataset$startTime))), ncol=6), stringsAsFactors = FALSE)
-  names(returnset)=c("ID","startTime","firstDeviationTime","rotationSpeed","numberOfSwitches","shortDirection")
+  names(returnset)=c("ID","startTime","firstDeviationTime","rotationSpeed","numberOfSwitches","shortDirection",
+                     "firstDeviationTimeAvgByID","rotationSpeedAvgByID","numberOfSwitchesByID")
   if (verbose>1) {
     print(paste("Summarizing training data of", nrow(returnset), "stimuli..."))
   }
@@ -76,16 +77,18 @@ summarizeTrainingData=function(dataset,verbose){
       numberOfSwitches=sum(diff(sign(rotationSteps))!=0)
       #rotation speed from first deviation to finish (in °/s)
       rotationSpeed=1000*(firstAllowedAnswerDegrees-startDegrees)/(firstAllowedAnswerTime-firstDeviationTime)
-      #was the rotation in the short direction? (180 undefined -> considered later)
+      #was the rotation in the short direction? (180 undefined -> excluded later)
       shortDirection=FALSE
       if(sign(startDegrees-180)==sign(rotationSpeed))
         shortDirection=TRUE
-      returnset[i,]=list(thisID,thisStartTime,firstDeviationTime,rotationSpeed,numberOfSwitches,shortDirection)
+      returnset[i,1:6]=list(thisID,thisStartTime,firstDeviationTime,rotationSpeed,numberOfSwitches,shortDirection)
       if (verbose>3) {
         print(paste("Stimulus", i, "of", nrow(returnset), "finished."))
       }
       i=i+1
     }
+    #calculate summaries by ID
+    returnset[which(returnset$ID==thisID),7:9]=summarizeDataByID(returnset[which(returnset$ID==thisID),])
   }
   if (verbose>1) {
     print("Summarizing training data finished.")

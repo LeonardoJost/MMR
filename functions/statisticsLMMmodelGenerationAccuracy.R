@@ -170,6 +170,27 @@ a16=glmer((type=="hit")~degY*endTime*block*group+
             Gender*block+
             (deg+endTime+deg*endTime|ID)+(deg+endTime|modelNumber),family=binomial(),data=dataset.acc,control = glmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
 a16.summary=modelSummary(a16,0)
+#split degZ*group
+a17=glmer((type=="hit")~degY*endTime*block*group+
+            degZ*block+
+            degZ*correct_response+endTime*correct_response+
+            Gender*block+
+            (deg+endTime+deg*endTime|ID)+(deg+endTime|modelNumber),family=binomial(),data=dataset.acc,control = glmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+a17.summary=modelSummary(a17,0)
+#split endTime*correct_response
+a18=glmer((type=="hit")~degY*endTime*block*group+
+            degZ*block+
+            degZ*correct_response+
+            Gender*block+
+            (deg+endTime+deg*endTime|ID)+(deg+endTime|modelNumber),family=binomial(),data=dataset.acc,control = glmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+a18.summary=modelSummary(a18,0)
+#split degZ*correct_response
+a19=glmer((type=="hit")~degY*endTime*block*group+
+            degZ*block+
+            correct_response+
+            Gender*block+
+            (deg+endTime+deg*endTime|ID)+(deg+endTime|modelNumber),family=binomial(),data=dataset.acc,control = glmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+a19.summary=modelSummary(a19,0)
 
 
 
