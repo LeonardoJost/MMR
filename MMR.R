@@ -57,6 +57,8 @@ MRDataTraining=summarizeTrainingData(MRDataTraining,verbose)
 #unify data
 dataset=merge(MRData,questionaireData,by="ID")
 dataset=merge(dataset,MRDataTraining,by=c("ID","startTime"),all.x=TRUE)
+#save average training data to each ID
+dataset=summarizeTrainingDataByID(dataset)
 #anonymise IDs to protect participant identity
 dataset$ID=as.factor(dataset$ID)
 levels(dataset$ID)=paste("id",sample.int(length(levels(dataset$ID))),sep="")

@@ -31,8 +31,8 @@ summarizeTrainingData=function(dataset,verbose){
   #name startTime for each stimulus
   dataset$startTime=dataset$endTime-dataset$reactionTime
   #create dataset for saving/returning data
-  returnset=data.frame(matrix(nrow=length(unique(paste(dataset$ID,dataset$startTime))), ncol=6), stringsAsFactors = FALSE)
-  names(returnset)=c("ID","startTime","firstDeviationTime","rotationSpeed","numberOfSwitches","shortDirection")
+  returnset=data.frame(matrix(nrow=length(unique(paste(dataset$ID,dataset$startTime))), ncol=7), stringsAsFactors = FALSE)
+  names(returnset)=c("ID","startTime","firstDeviationTime","rotationSpeed","numberOfSwitches","shortDirection","firstAllowedAnswerTime")
   if (verbose>1) {
     print(paste("Summarizing training data of", nrow(returnset), "stimuli..."))
   }
@@ -76,11 +76,11 @@ summarizeTrainingData=function(dataset,verbose){
       numberOfSwitches=sum(diff(sign(rotationSteps))!=0)
       #rotation speed from first deviation to finish (in °/s)
       rotationSpeed=1000*(firstAllowedAnswerDegrees-startDegrees)/(firstAllowedAnswerTime-firstDeviationTime)
-      #was the rotation in the short direction? (180 undefined -> considered later)
+      #was the rotation in the short direction? (180 undefined -> excluded later)
       shortDirection=FALSE
       if(sign(startDegrees-180)==sign(rotationSpeed))
         shortDirection=TRUE
-      returnset[i,]=list(thisID,thisStartTime,firstDeviationTime,rotationSpeed,numberOfSwitches,shortDirection)
+      returnset[i,]=list(thisID,thisStartTime,firstDeviationTime,rotationSpeed,numberOfSwitches,shortDirection,firstAllowedAnswerTime)
       if (verbose>3) {
         print(paste("Stimulus", i, "of", nrow(returnset), "finished."))
       }
@@ -94,11 +94,16 @@ summarizeTrainingData=function(dataset,verbose){
 }
 
 #summarizes training data by ID
-#dataset: dataset containing all summarized training stimuli for one id
-summarizeDataByID=function(dataset){
-  dataset$firstDeviationTimeAvgByID=mean(dataset$firstDeviationTime)
-  dataset$rotationSpeedAvgByID=mean(dataset$rotationSpeed)
-  dataset$numberOfSwitchesByID=mean(dataset$numberOfSwitches)
+#dataset: dataset containing all summarized training stimuli
+summarizeTrainingDataByID=function(dataset){
+  dataset$firstDeviationTimeAvgByID=NA
+  dataset$rotationSpeedAbsAvgByID=NA
+  dataset$numberOfSwitchesByID=NA
+  for(thisID in unique(dataset$ID)) {
+    dataset$firstDeviationTimeAvgByID[which(dataset$ID==thisID)]=mean(dataset$firstDeviationTime[which(dataset$ID==thisID & dataset$block=="training")])
+    dataset$rotationSpeedAbsAvgByID[which(dataset$ID==thisID)]=mean(abs(dataset$rotationSpeed[which(dataset$ID==thisID & dataset$block=="training")]))
+    dataset$numberOfSwitchesByID[which(dataset$ID==thisID)]=mean(dataset$numberOfSwitches[which(dataset$ID==thisID & dataset$block=="training")])
+  }
   return(dataset)
 }
 
