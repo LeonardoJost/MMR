@@ -197,6 +197,36 @@ a20=glmer((type=="hit")~degY*endTime*block*group+
             Gender*block+
             (deg+endTime+deg*endTime|ID)+(deg+endTime|modelNumber),family=binomial(),data=dataset.acc,control = glmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
 a20.summary=modelSummary(a20,0)
+#split degY*endTime*block*group
+a21=glmer((type=="hit")~endTime*block*group+degY*block*group+degY*endTime*group+degY*endTime*block+
+            degZ*block+
+            Gender*block+
+            (deg+endTime+deg*endTime|ID)+(deg+endTime|modelNumber),family=binomial(),data=dataset.acc,control = glmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+a21.summary=modelSummary(a21,0)
+#split degY*block*group
+a22=glmer((type=="hit")~endTime*block*group+degY*endTime*group+degY*endTime*block+
+            degZ*block+
+            Gender*block+
+            (deg+endTime+deg*endTime|ID)+(deg+endTime|modelNumber),family=binomial(),data=dataset.acc,control = glmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+a22.summary=modelSummary(a22,0)
+#split degY*block*endTime
+a23=glmer((type=="hit")~endTime*block*group+degY*endTime*group+degY*block+
+            degZ*block+
+            Gender*block+
+            (deg+endTime+deg*endTime|ID)+(deg+endTime|modelNumber),family=binomial(),data=dataset.acc,control = glmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+a23.summary=modelSummary(a23,0)
+#summarize degY*block and degZ*block
+a23a=glmer((type=="hit")~endTime*block*group+degY*endTime*group+
+            deg*block+
+            Gender*block+
+            (deg+endTime+deg*endTime|ID)+(deg+endTime|modelNumber),family=binomial(),data=dataset.acc,control = glmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+anova(a23,a23a)
+#split degY*block
+a24=glmer((type=="hit")~endTime*block*group+degY*endTime*group+
+            degZ*block+
+            Gender*block+
+            (deg+endTime+deg*endTime|ID)+(deg+endTime|modelNumber),family=binomial(),data=dataset.acc,control = glmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+a24.summary=modelSummary(a24,0)
 
 
 

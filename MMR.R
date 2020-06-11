@@ -53,10 +53,10 @@ calculateMeansQuestionaire(verbose,questionaireData,questionaireOutFile,handedne
 #remove not analyzed questionaire data to protect participant identity
 questionaireData=subset(questionaireData,select=questionaireDataCols)
 #summarize training data (too much data otherwise)
-MRDataTraining=summarizeTrainingData(MRDataTraining,verbose)
+MRDataTrainingSummary=summarizeTrainingData(MRDataTraining,verbose)
 #unify data
 dataset=merge(MRData,questionaireData,by="ID")
-dataset=merge(dataset,MRDataTraining,by=c("ID","startTime"),all.x=TRUE)
+dataset=merge(dataset,MRDataTrainingSummary,by=c("ID","startTime"),all.x=TRUE)
 #save average training data to each ID
 dataset=summarizeTrainingDataByID(dataset)
 #anonymise IDs to protect participant identity

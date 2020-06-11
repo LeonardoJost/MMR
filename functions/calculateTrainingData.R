@@ -50,15 +50,18 @@ summarizeTrainingData=function(dataset,verbose){
       #get first entry -> starting degrees
       startTime=min(dataIdTime$reactionTime)
       startDegrees=dataIdTime$deg[which(dataIdTime$reactionTime==startTime)]
-      #get last time where degree==startDegree (start of first deviation -1)
-      firstDeviationTime=min(dataIdTime$reactionTime[which(abs(dataIdTime$deg-startDegrees)>1)-1])-startTime
+      #get last time where degree==startDegree
+      # -> get time of first deviation
+      firstDeviationTime=min(dataIdTime$reactionTime[which(abs(dataIdTime$deg-startDegrees)>1)])-startTime
+      #subtract average time between stimuli to get the estimated last showing before (important for trainingType 3)
+      firstDeviationTime=firstDeviationTime-mean(diff(dataIdTime$reactionTime[which(dataIdTime$reactionTime>startTime)]))
       #get finish time -> angle small enough that answer is allowed (<10 or >350) or jump over 360
       firstAllowedAnswerTime=min(dataIdTime$reactionTime[
         min(which(dataIdTime$deg<10),which(dataIdTime$deg>350),which(abs(diff(dataIdTime$deg))>300)+1)])-startTime
       firstAllowedAnswerDegrees=dataIdTime$deg[which(dataIdTime$reactionTime==firstAllowedAnswerTime+startTime)]
       #calculate the rotation in the "correct" direction and rotation in the "wrong" direction
       #get data for rotation
-      dataIdTimeRotation=dataIdTime[which(dataIdTime$reactionTime>=firstDeviationTime+startTime & dataIdTime$reactionTime<=firstAllowedAnswerTime+startTime),]
+      dataIdTimeRotation=dataIdTime[which(dataIdTime$reactionTime<=firstAllowedAnswerTime+startTime),]
       #get stepwise rotations
       rotationSteps=diff(dataIdTimeRotation$deg)
       #in case of rotation acroos 0/360°, correct by 360 for analysis (this can only happen in the last step)
@@ -86,8 +89,6 @@ summarizeTrainingData=function(dataset,verbose){
       }
       i=i+1
     }
-    #calculate summaries by ID
-    returnset[which(returnset$ID==thisID),7:9]=summarizeDataByID(returnset[which(returnset$ID==thisID),])
   }
   if (verbose>1) {
     print("Summarizing training data finished.")
@@ -110,5 +111,9 @@ summarizeTrainingDataByID=function(dataset){
 }
 
 #dataset=MRDataTraining
-#dataIdTime=dataset[which(dataset$ID==1581076965.8099999 & dataset$startTime==873317),]
+#thisID=unique(dataset$ID)[1]
+#thisID=id46
+#dataId=dataset[which(dataset$ID==thisID),]
+#thisStartTime=unique(dataId$startTime)[1]
+#thisStartTime=301256
 #print(paste(startTime,startDegrees,firstDeviationTime,firstAllowedAnswerTime,firstAllowedAnswerDegrees,rotationSpeed,numberOfSwitches,sep=", "))

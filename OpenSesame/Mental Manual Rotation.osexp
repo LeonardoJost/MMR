@@ -26,7 +26,7 @@ set font_size 24
 set font_italic no
 set font_family sans
 set font_bold no
-set experiment_path "C:\\Users\\LocalAdmin\\Documents\\Programmierung\\OpenSesame\\Mental Manual Rotation"
+set experiment_path "C:\\Users\\LocalAdmin\\Documents\\Programmierung\\R\\MMR\\OpenSesame"
 set disable_garbage_collection yes
 set description "The main experiment item"
 set coordinates uniform
@@ -583,10 +583,11 @@ define inline_script VisualRotation
 		directionArray[0]=1
 	elif var.angle==180:
 		random.shuffle(directionArray)
-	var.rotationDirection=directionArray[0]
+	var.rotationDirection=0
 	#show start image for 500ms
 	items.execute(u'Rotation')
 	clock.sleep(500)
+	var.rotationDirection=directionArray[0]
 	#visual rotation of stimulus
 	pedal=u'0'
 	#loop until response is given
