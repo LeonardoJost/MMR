@@ -33,6 +33,17 @@ myData[which(myData$block=="preTest"),"endTime"]=myData[which(myData$block=="pre
 #separate rotation angle by axis
 myData$degY=myData$deg*(myData$axis=="y")
 myData$degZ=myData$deg*(myData$axis=="z")
+#0,1-> pretest and training
+#2,3-> pretest, posttest
+#4,5-> only pretest
+#6,7-> training, posttest
+#8,9-> only training
+#10,11-> only posttest
+myData$trainedModel=ifelse(myData$modelIndex<2,"preTrai",
+                    ifelse(myData$modelIndex<4,"prePost",
+                    ifelse(myData$modelIndex<6,"pre",
+                    ifelse(myData$modelIndex<8,"traiPost",
+                    ifelse(myData$modelIndex<10,"trai","post")))))
 
 #dataset for analysis
 datasetAnalysis=myData
@@ -69,7 +80,23 @@ generateTableAndGraphsForCondition(myData,"datasetTime",TRUE,TRUE,"Group",TRUE)
 
 #plot groups over time for training
 myDataTraining$cond=myDataTraining$group
-generateTableAndGraphsForCondition(myDataTraining,"TrainingGroup",TRUE,TRUE,"Block")
+generateTableAndGraphsForCondition(myDataTraining,"TrainingGroup",TRUE,TRUE,"Group")
+#plot firstDeviationTime instead of reaction Time
+myDataTraining$reactionTime2=myDataTraining$reactionTime
+myDataTraining$reactionTime=myDataTraining$firstDeviationTime
+generateTableAndGraphsForCondition(myDataTraining,"TrainingGroupFirstDeviationTime",TRUE,TRUE,"Group")
+#plot firstAllowedAnswerTime instead of reaction Time
+myDataTraining$reactionTime=myDataTraining$firstAllowedAnswerTime
+generateTableAndGraphsForCondition(myDataTraining,"TrainingGroupFirstAllowedAnswerTime",TRUE,TRUE,"Group")
+#plot time from first allowed answer until actual reaction
+myDataTraining$reactionTime=myDataTraining$reactionTime2-myDataTraining$firstAllowedAnswerTime
+generateTableAndGraphsForCondition(myDataTraining,"TrainingGroupFirstAllowedAnswerTimeDifference",TRUE,TRUE,"Group")
+#plot rotationSpeed instead of reaction Time
+myDataTraining$reactionTime=abs(myDataTraining$rotationSpeed)
+generateTableAndGraphsForCondition(myDataTraining,"TrainingGroupRotationSpeed",TRUE,TRUE,"Group")
+#plot numberOfSwitches instead of reaction Time
+myDataTraining$reactionTime=myDataTraining$numberOfSwitches
+generateTableAndGraphsForCondition(myDataTraining,"TrainingGroupNumberOfSwitches",TRUE,TRUE,"Group")
 
 #plot side differences
 myData$cond=myData$correct_response

@@ -63,8 +63,8 @@ generateGraphs=function(dataset,title,legendTitle="cond") {
   library(ggplot2)
   #plot data as line graph (mean Data by degree and condition)
   ggplot(dataset,aes(y=reactionTime,x=deg,group=deg,fill=cond, color=cond, linetype=cond, shape=cond)) + 
-    stat_summary(na.rm=TRUE, fun.y=mean, geom="line",  aes(group=cond,color=cond)) +
-    stat_summary(na.rm=TRUE, fun.y=mean, geom="point", size=2,aes(group=cond,color=cond)) +
+    stat_summary(na.rm=TRUE, fun=mean, geom="line",  aes(group=cond,color=cond)) +
+    stat_summary(na.rm=TRUE, fun=mean, geom="point", size=2,aes(group=cond,color=cond)) +
     stat_summary(fun.data=mean_cl_normal,geom="errorbar", width=0.2,aes(group=cond,color=cond)) +
     scale_x_continuous(breaks=c(0:4)*45)+
     labs(x="degrees(°)",y="Reaction Time(ms)",color=legendTitle,fill=legendTitle,linetype=legendTitle,shape=legendTitle) + 
@@ -99,8 +99,8 @@ generateAccGraphs=function(dataset,title,legendTitle="cond") {
   library(ggplot2)
   #plot data as line graph (mean Data by degree and condition)
   ggplot(dataset,aes(y=acc,x=deg,group=deg,fill=cond, color=cond, linetype=cond, shape=cond)) + 
-    stat_summary(na.rm=TRUE, fun.y=mean, geom="line",  aes(group=cond,color=cond)) +
-    stat_summary(na.rm=TRUE, fun.y=mean, geom="point", size=2,aes(group=cond,color=cond)) +
+    stat_summary(na.rm=TRUE, fun=mean, geom="line",  aes(group=cond,color=cond)) +
+    stat_summary(na.rm=TRUE, fun=mean, geom="point", size=2,aes(group=cond,color=cond)) +
     stat_summary(fun.data=mean_cl_normal,geom="errorbar", width=0.2,aes(group=cond,color=cond)) +
     scale_x_continuous(breaks=c(0:4)*45)+
     labs(x="degrees(°)",y="Proportion of correct answers",color=legendTitle,fill=legendTitle,linetype=legendTitle, shape=legendTitle) + 
@@ -153,7 +153,7 @@ generateAccGraphsOld=function(dataset,title) {
   ggplot(dataset,aes(y=acc,x=deg,group=deg,fill=cond)) + 
     stat_boxplot(na.rm=TRUE, position=position_dodge(2),geom = "errorbar") +
     geom_boxplot(na.rm=TRUE, position=position_dodge(2)) +theme_bw() + facet_wrap(~cond) +
-    stat_summary(na.rm=TRUE, fun.y=mean, geom="point", shape=20, size=2, color="black", fill="black") +
+    stat_summary(na.rm=TRUE, fun=mean, geom="point", shape=20, size=2, color="black", fill="black") +
     labs(x="degrees(°)",y="accuracy",fill="condition")
   ggsave(paste("figs/",title,"PlotByDegreeConditionAxis.png",sep=""))
   
@@ -161,7 +161,7 @@ generateAccGraphsOld=function(dataset,title) {
   ggplot(dataset,aes(y=acc,x=cond,group=cond,fill=cond)) + 
     stat_boxplot(na.rm=TRUE, position=position_dodge(2),geom = "errorbar") +
     geom_boxplot(na.rm=TRUE, position=position_dodge(2)) +theme_bw() + facet_wrap(~deg) +
-    stat_summary(na.rm=TRUE, fun.y=mean, geom="point", shape=20, size=2, color="black", fill="black") +
+    stat_summary(na.rm=TRUE, fun=mean, geom="point", shape=20, size=2, color="black", fill="black") +
     labs(x="condition",y="accuracy") + guides(fill=FALSE)
   ggsave(paste("figs/",title,"PlotByDegreeCondition.png",sep=""))
 }
@@ -184,7 +184,7 @@ generateRTGraphsOld=function(dataset,title,outliers=TRUE) {
     ggplot(dataset,aes(y=reactionTime,x=deg,group=deg)) + 
       stat_boxplot(na.rm=TRUE, position=position_dodge(2),geom = "errorbar") +
       geom_boxplot(na.rm=TRUE, position=position_dodge(2)) +theme_bw() +
-      stat_summary(na.rm=TRUE, fun.y=mean, geom="point", shape=20, size=2, color="black", fill="black") +
+      stat_summary(na.rm=TRUE, fun=mean, geom="point", shape=20, size=2, color="black", fill="black") +
       stat_summary(fun.data = meanSd3, geom = "pointrange", position = position_dodge(1), fill="red", color="red") +
       labs(x="degrees(°)",y="Reaction Time(ms)")
     ggsave(paste("figs/",title,"PlotByDegreeWithMeanSd.png",sep=""))
@@ -194,7 +194,7 @@ generateRTGraphsOld=function(dataset,title,outliers=TRUE) {
       stat_boxplot(na.rm=TRUE, position=position_dodge(2),geom = "errorbar") +
       geom_boxplot(na.rm=TRUE, position=position_dodge(2)) +theme_bw() +
       labs(x="degrees(°)",y="Reaction Time(ms)") +
-      stat_summary(na.rm=TRUE, fun.y=mean, geom="point", shape=20, size=2, color="black", fill="black") +
+      stat_summary(na.rm=TRUE, fun=mean, geom="point", shape=20, size=2, color="black", fill="black") +
       geom_point(data=dataset[dataset$reactionTime > dataset$upper.limit | dataset$reactionTime < dataset$lower.limit,], aes(col=typeOutlier))
     ggsave(paste("figs/",title,"PlotByDegreeOutlierColor.png",sep=""))
     
@@ -203,14 +203,14 @@ generateRTGraphsOld=function(dataset,title,outliers=TRUE) {
       stat_boxplot(na.rm=TRUE, position=position_dodge(2),geom = "errorbar") +
       geom_boxplot(na.rm=TRUE, position=position_dodge(2)) +theme_bw() +
       labs(x="degrees(°)",y="Reaction Time(ms)") +
-      stat_summary(na.rm=TRUE, fun.y=mean, geom="point", shape=20, size=2, color="black", fill="black") 
+      stat_summary(na.rm=TRUE, fun=mean, geom="point", shape=20, size=2, color="black", fill="black") 
     ggsave(paste("figs/",title,"PlotByDegreeNoOutlier.png",sep=""))
   }
   #plot data (all Data by degree and condition, grouped by condition)
   ggplot(dataset,aes(y=reactionTime,x=deg,group=deg,fill=cond)) + 
     stat_boxplot(na.rm=TRUE, position=position_dodge(2),geom = "errorbar") +
     geom_boxplot(na.rm=TRUE, position=position_dodge(2)) +theme_bw() + facet_wrap(~cond) + 
-    stat_summary(na.rm=TRUE, fun.y=mean, geom="point", shape=20, size=2, color="black", fill="black") + 
+    stat_summary(na.rm=TRUE, fun=mean, geom="point", shape=20, size=2, color="black", fill="black") + 
     labs(x="degrees(°)",y="Reaction Time(ms)",fill="condition")
   ggsave(paste("figs/",title,"PlotByConditionDegree.png",sep=""))
   
@@ -218,7 +218,7 @@ generateRTGraphsOld=function(dataset,title,outliers=TRUE) {
   ggplot(dataset,aes(y=reactionTime,x=cond,group=cond,fill=cond)) + 
     stat_boxplot(na.rm=TRUE, position=position_dodge(2),geom = "errorbar") +
     geom_boxplot(na.rm=TRUE, position=position_dodge(2)) +theme_bw() + facet_wrap(~deg) + 
-    stat_summary(na.rm=TRUE, fun.y=mean, geom="point", shape=20, size=2, color="black", fill="black") +
+    stat_summary(na.rm=TRUE, fun=mean, geom="point", shape=20, size=2, color="black", fill="black") +
     labs(x="condition",y="Reaction Time(ms)") + guides(fill=FALSE)
   ggsave(paste("figs/",title,"PlotByDegreeCondition.png",sep=""))
 }
