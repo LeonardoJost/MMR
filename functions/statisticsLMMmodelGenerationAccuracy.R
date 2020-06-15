@@ -227,10 +227,34 @@ a24=glmer((type=="hit")~endTime*block*group+degY*endTime*group+
             Gender*block+
             (deg+endTime+deg*endTime|ID)+(deg+endTime|modelNumber),family=binomial(),data=dataset.acc,control = glmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
 a24.summary=modelSummary(a24,0)
-
-
-
+#split endTime*block*group
+a25=glmer((type=="hit")~block*group+endTime*block+
+            degY*endTime*group+
+            degZ*block+
+            Gender*block+
+            (deg+endTime+deg*endTime|ID)+(deg+endTime|modelNumber),family=binomial(),data=dataset.acc,control = glmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+a25.summary=modelSummary(a25,0)
+#split block*group
+a26=glmer((type=="hit")~endTime*block+
+            degY*endTime*group+
+            degZ*block+
+            Gender*block+
+            (deg+endTime+deg*endTime|ID)+(deg+endTime|modelNumber),family=binomial(),data=dataset.acc,control = glmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+a26.summary=modelSummary(a26,0)
+#split block*Gender
+a27=glmer((type=="hit")~endTime*block+
+            degY*endTime*group+
+            degZ*block+
+            Gender+
+            (deg+endTime+deg*endTime|ID)+(deg+endTime|modelNumber),family=binomial(),data=dataset.acc,control = glmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+a27.summary=modelSummary(a27,0)
+#remove Gender
+a28=glmer((type=="hit")~endTime*block+
+            degY*endTime*group+
+            degZ*block+
+            (deg+endTime+deg*endTime|ID)+(deg+endTime|modelNumber),family=binomial(),data=dataset.acc,control = glmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+a28.summary=modelSummary(a28,0)
 
 #all values significant
 #visual inspection of normality
-plot(a24)
+plot(a28)
