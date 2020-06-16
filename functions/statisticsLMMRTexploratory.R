@@ -28,22 +28,104 @@ mBase=lmer(reactionTime~degY*endTime*block*group+
              deg*correct_response+deg*endTime+
              Gender*block+Experience*block+
              (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
-#comparing if models were previously trained or not
-mTrainedModels=lmer(reactionTime~degY*endTime*block*group+
-                      degZ*block+
+#posttest base model
+mPostTest=lmer(reactionTime~endTime*group+degY*group+
+                 deg*correct_response+deg*endTime+
+                 (deg+endTime|ID)+(1|modelNumber),
+               data=dataset.rt.postTest,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+
+#comparing if models were previously trained or not in posttest performance
+mTrainedModels=lmer(reactionTime~endTime*group+degY*group+
                       deg*correct_response+deg*endTime+
-                      Gender*block+Experience*block+
-                      trainedModel*block*group+
-                      (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
-anova(mBase,mTrainedModels)
+                      trainedModel*group+
+                      (deg+endTime|ID)+(1|modelNumber),
+                    data=dataset.rt.postTest,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+anova(mPostTest,mTrainedModels)
 summary(mTrainedModels)
-#comparing training performance
-#firstDeviationTime for each participant
-mfirstDeviationTime=lmer(reactionTime~degY*endTime*block*group+
-                      degZ*block+
+#combining models prePost and traiPost as trained models
+mTrainedModels2=lmer(reactionTime~endTime*group+degY*group+
                       deg*correct_response+deg*endTime+
-                      Gender*block+Experience*block+
-                      firstDeviationTimeAvgByID*block*group+
-                      (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
-anova(mBase,mfirstDeviationTime)
-summary(mfirstDeviationTime)
+                      trainedModelPost*group+
+                      (deg+endTime|ID)+(1|modelNumber),
+                    data=dataset.rt.postTest,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+anova(mPostTest,mTrainedModels,mTrainedModels2)
+mTrainedModels2.summary=modelSummary(mTrainedModels2)
+#comparing training performance
+#all possible training effects
+mTrainingEffects=lmer(reactionTime~endTime*group+degY*group+
+                           deg*correct_response+deg*endTime+
+                           firstDeviationTimeAvgByID*group+
+                           rotationSpeedAbsAvgByID*group+
+                           numberOfSwitchesByID*group+
+                           numberOfTrainingTrialsByID*group+
+                           numberOfPretestTrialsByID*group+
+                           (deg+endTime|ID)+(1|modelNumber),
+                         data=dataset.rt.postTest,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+mTrainingEffects.summary=modelSummary(mTrainingEffects,0)
+#split group*rotationSpeedAbsAvgByID
+mTrainingEffects2=lmer(reactionTime~endTime*group+degY*group+
+                         deg*correct_response+deg*endTime+
+                         firstDeviationTimeAvgByID*group+
+                         rotationSpeedAbsAvgByID+
+                         numberOfSwitchesByID*group+
+                         numberOfTrainingTrialsByID*group+
+                         numberOfPretestTrialsByID*group+
+                         (deg+endTime|ID)+(1|modelNumber),
+                       data=dataset.rt.postTest,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+mTrainingEffects2.summary=modelSummary(mTrainingEffects2,0)
+#split group*numberOfSwitchesByID
+mTrainingEffects3=lmer(reactionTime~endTime*group+degY*group+
+                         deg*correct_response+deg*endTime+
+                         firstDeviationTimeAvgByID*group+
+                         rotationSpeedAbsAvgByID+
+                         numberOfSwitchesByID+
+                         numberOfTrainingTrialsByID*group+
+                         numberOfPretestTrialsByID*group+
+                         (deg+endTime|ID)+(1|modelNumber),
+                       data=dataset.rt.postTest,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+mTrainingEffects3.summary=modelSummary(mTrainingEffects3,0)
+#remove numberOfSwitchesByID
+mTrainingEffects4=lmer(reactionTime~endTime*group+degY*group+
+                         deg*correct_response+deg*endTime+
+                         firstDeviationTimeAvgByID*group+
+                         rotationSpeedAbsAvgByID+
+                         numberOfTrainingTrialsByID*group+
+                         numberOfPretestTrialsByID*group+
+                         (deg+endTime|ID)+(1|modelNumber),
+                       data=dataset.rt.postTest,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+mTrainingEffects4.summary=modelSummary(mTrainingEffects4,0)
+#remove rotationSpeedAbsAvgByID
+mTrainingEffects5=lmer(reactionTime~endTime*group+degY*group+
+                         deg*correct_response+deg*endTime+
+                         firstDeviationTimeAvgByID*group+
+                         numberOfTrainingTrialsByID*group+
+                         numberOfPretestTrialsByID*group+
+                         (deg+endTime|ID)+(1|modelNumber),
+                       data=dataset.rt.postTest,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+mTrainingEffects5.summary=modelSummary(mTrainingEffects5,0)
+#split firstDeviationTimeAvgByID*group
+mTrainingEffects6=lmer(reactionTime~endTime*group+degY*group+
+                         deg*correct_response+deg*endTime+
+                         firstDeviationTimeAvgByID+
+                         numberOfTrainingTrialsByID*group+
+                         numberOfPretestTrialsByID*group+
+                         (deg+endTime|ID)+(1|modelNumber),
+                       data=dataset.rt.postTest,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+mTrainingEffects6.summary=modelSummary(mTrainingEffects6,0)
+#remove firstDeviationTimeAvgByID
+mTrainingEffects7=lmer(reactionTime~endTime*group+degY*group+
+                         deg*correct_response+deg*endTime+
+                         numberOfTrainingTrialsByID*group+
+                         numberOfPretestTrialsByID*group+
+                         (deg+endTime|ID)+(1|modelNumber),
+                       data=dataset.rt.postTest,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+mTrainingEffects7.summary=modelSummary(mTrainingEffects7,0)
+#split numberOfPretestTrialsByID*group
+mTrainingEffects8=lmer(reactionTime~endTime*group+degY*group+
+                         deg*correct_response+deg*endTime+
+                         numberOfTrainingTrialsByID*group+
+                         numberOfPretestTrialsByID+
+                         (deg+endTime|ID)+(1|modelNumber),
+                       data=dataset.rt.postTest,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+mTrainingEffects8.summary=modelSummary(mTrainingEffects8)
+save(mTrainingEffects8,mTrainingEffects8.summary,file="statmodels/RTmTrainingEffects.RData")

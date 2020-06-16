@@ -44,6 +44,7 @@ myData$trainedModel=ifelse(myData$modelIndex<2,"preTrai",
                     ifelse(myData$modelIndex<6,"pre",
                     ifelse(myData$modelIndex<8,"traiPost",
                     ifelse(myData$modelIndex<10,"trai","post")))))
+myData$trainedModelPost=ifelse(myData$trainedModel=="post",FALSE,TRUE)
 
 #dataset for analysis
 datasetAnalysis=myData

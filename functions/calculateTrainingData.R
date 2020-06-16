@@ -102,10 +102,14 @@ summarizeTrainingDataByID=function(dataset){
   dataset$firstDeviationTimeAvgByID=NA
   dataset$rotationSpeedAbsAvgByID=NA
   dataset$numberOfSwitchesByID=NA
+  dataset$numberOfTrainingTrialsByID=NA
+  dataset$numberOfPretestTrialsByID=NA
   for(thisID in unique(dataset$ID)) {
     dataset$firstDeviationTimeAvgByID[which(dataset$ID==thisID)]=mean(dataset$firstDeviationTime[which(dataset$ID==thisID & dataset$block=="training")])
     dataset$rotationSpeedAbsAvgByID[which(dataset$ID==thisID)]=mean(abs(dataset$rotationSpeed[which(dataset$ID==thisID & dataset$block=="training")]))
     dataset$numberOfSwitchesByID[which(dataset$ID==thisID)]=mean(dataset$numberOfSwitches[which(dataset$ID==thisID & dataset$block=="training")])
+    dataset$numberOfTrainingTrialsByID[which(dataset$ID==thisID)]=nrow(dataset[which(dataset$ID==thisID & dataset$block=="training"),])
+    dataset$numberOfPretestTrialsByID[which(dataset$ID==thisID)]=nrow(dataset[which(dataset$ID==thisID & dataset$block=="preTest"),])
   }
   return(dataset)
 }
