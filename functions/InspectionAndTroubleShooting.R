@@ -15,13 +15,13 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #number of each trainingType
-trainingTypes=unique(datasetAnalysis[,c("ID","trainingType","group")])
+trainingTypes=unique(datasetAnalysis[,c("ID","trainingType","group","Gender")])
 nrow(trainingTypes)
-n_occur=data.frame(table(paste(trainingTypes$trainingType,trainingTypes$group)))
+n_occur=data.frame(table(paste(trainingTypes$trainingType,paste(trainingTypes$group,trainingTypes$Gender))))
 print(n_occur)
 
 #number of outliers, incorrect answers, unrotated stimuli for each part
-dataset=read.csv(file="output\\dataset.csv",sep=";")
+dataset=read.csv(file="dataset\\dataset.csv",sep=";")
 #overall outliers
 n_occur=data.frame(table(dataset$outlier))
 print(n_occur)
@@ -46,3 +46,11 @@ for(thisblock in levels(as.factor(dataset$block))){
   n_occur=data.frame(table(datasetPerBlock$deg))
   print(n_occur)
 }
+
+#average number of training trials per group
+trainingTrialsByID=unique(datasetAnalysis[,c("ID","numberOfTrainingTrialsByID","group")])
+for(group in levels(as.factor(trainingTrialsByID$group))) {
+  print(group)
+  print(meanMode(trainingTrialsByID$numberOfTrainingTrialsByID[which(trainingTrialsByID$group==group)],TRUE,5))
+}
+  

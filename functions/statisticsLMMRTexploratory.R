@@ -40,16 +40,25 @@ mTrainedModels=lmer(reactionTime~endTime*group+degY*group+
                       trainedModel*group+
                       (deg+endTime|ID)+(1|modelNumber),
                     data=dataset.rt.postTest,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
-anova(mPostTest,mTrainedModels)
-summary(mTrainedModels)
-#combining models prePost and traiPost as trained models
 mTrainedModels2=lmer(reactionTime~endTime*group+degY*group+
-                      deg*correct_response+deg*endTime+
-                      trainedModelPost*group+
-                      (deg+endTime|ID)+(1|modelNumber),
-                    data=dataset.rt.postTest,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
-anova(mPostTest,mTrainedModels,mTrainedModels2)
-mTrainedModels2.summary=modelSummary(mTrainedModels2)
+                       deg*correct_response+deg*endTime+
+                       trainedModel+
+                       (deg+endTime|ID)+(1|modelNumber),
+                     data=dataset.rt.postTest,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+#combining models prePost and traiPost as trained models
+mTrainedModels3=lmer(reactionTime~endTime*group+degY*group+
+                       deg*correct_response+deg*endTime+
+                       trainedModelPost*group+
+                       (deg+endTime|ID)+(1|modelNumber),
+                     data=dataset.rt.postTest,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+mTrainedModels4=lmer(reactionTime~endTime*group+degY*group+
+                       deg*correct_response+deg*endTime+
+                       trainedModelPost+
+                       (deg+endTime|ID)+(1|modelNumber),
+                     data=dataset.rt.postTest,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+anova(mPostTest,mTrainedModels,mTrainedModels2,mTrainedModels3,mTrainedModels4)
+mTrainedModels4.summary=modelSummary(mTrainedModels4)
+save(mTrainedModels4,mTrainedModels4.summary,file="statmodels/RTmTrainedModels.RData")
 #comparing training performance
 #all possible training effects
 mTrainingEffects=lmer(reactionTime~endTime*group+degY*group+

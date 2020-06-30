@@ -78,6 +78,10 @@ dataset.rt.postTest=dataset.rt[which(dataset.rt$block=="postTest"),]
 myData$cond=paste(myData$group,myData$block,sep="*")
 myData$condForLineTypes=myData$group
 generateTableAndGraphsForCondition(myData,"datasetTime",TRUE,TRUE,"Group",TRUE)
+#plot axis differences for pre/posttest
+myData$cond=paste(myData$axis,myData$block,sep="*")
+myData$condForLineTypes=myData$axis
+generateTableAndGraphsForCondition(myData,"AxisBlock",TRUE,TRUE,"Axis",TRUE)
 
 #plot groups over time for training
 myDataTraining$cond=myDataTraining$group
