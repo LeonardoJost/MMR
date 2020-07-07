@@ -63,6 +63,8 @@ mBlockGroup=lmer(reactionTime~degY*endTime*block*group-block:group+
                        (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
 anova(mBlockGroup,mBase)
 
+#nonsignificant effects
+
 
 #split pre- and posttest
 mPostTest1=lmer(reactionTime~degY*endTime*group+
@@ -158,7 +160,7 @@ mPreTest=lmer(reactionTime~degY+endTime+
                data=dataset.rt.preTest,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
 mPreTest.summary=modelSummary(mPreTest)
 #all significant
-
+plot(mPreTest)
 save(mPreTest,mPreTest.summary,file="statmodels/RTmPreTest.RData")
 
 
