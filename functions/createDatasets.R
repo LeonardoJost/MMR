@@ -30,6 +30,7 @@ myData=myData[which(myData$block!="training"),]
 myData[which(myData$endTime>10.1),]
 #subtract 10 minutes from preTest times to set transition between tests to 0
 myData[which(myData$block=="preTest"),"endTime"]=myData[which(myData$block=="preTest"),"endTime"]-10
+myDataTraining$endTime=myDataTraining$endTime-10
 #separate rotation angle by axis
 myData$degY=myData$deg*(myData$axis=="y")
 myData$degZ=myData$deg*(myData$axis=="z")
@@ -73,6 +74,22 @@ dataset.acc$degZ=dataset.acc$degZ-mean(dataset.acc$degZ)
 #split pre- and posttest data
 dataset.rt.preTest=dataset.rt[which(dataset.rt$block=="preTest"),]
 dataset.rt.postTest=dataset.rt[which(dataset.rt$block=="postTest"),]
+
+#training data
+datasetForLMMTraining=myDataTraining
+#scaling
+datasetForLMMTraining$deg=datasetForLMMTraining$deg/100
+datasetForLMMTraining$endTime=datasetForLMMTraining$endTime/30 #30 minutes (time is already in minutes)
+#prepare dataset
+dataset.noOutlier.Training=datasetForLMMTraining[which(!datasetForLMMTraining$outlier),]
+dataset.acc.Training=dataset.noOutlier.Training
+dataset.rt.Training=dataset.noOutlier.Training[which(dataset.noOutlier.Training$typeOutlier=="hit"),]
+#center degree
+dataset.rt.Training$deg=dataset.rt.Training$deg-mean(dataset.rt.Training$deg) 
+dataset.acc.Training$deg=dataset.acc.Training$deg-mean(dataset.acc.Training$deg)
+dataset.TrainingButtonsWheel=dataset.acc.Training[which(dataset.acc.Training$group!="visual"),]
+dataset.acc.Training$comparisonTime=dataset.acc.Training$reactionTime-dataset.acc.Training$firstAllowedAnswerTime
+
 
 #plot block*group interaction over time for pre/posttest
 myData$cond=paste(myData$group,myData$block,sep="*")
