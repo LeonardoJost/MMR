@@ -106,19 +106,19 @@ generateTableAndGraphsForCondition(myDataTraining,"TrainingGroup",TRUE,TRUE,"Gro
 #plot firstDeviationTime instead of reaction Time
 myDataTraining$reactionTime2=myDataTraining$reactionTime
 myDataTraining$reactionTime=myDataTraining$firstDeviationTime
-generateTableAndGraphsForCondition(myDataTraining,"TrainingGroupFirstDeviationTime",TRUE,TRUE,"Group")
-#plot firstAllowedAnswerTime instead of reaction Time
-myDataTraining$reactionTime=myDataTraining$firstAllowedAnswerTime
-generateTableAndGraphsForCondition(myDataTraining,"TrainingGroupFirstAllowedAnswerTime",TRUE,TRUE,"Group")
+generateTableAndGraphsForCondition(myDataTraining,"TrainingGroupPlanningTime",TRUE,TRUE,"Group",ylab="Planning Time(ms)")
 #plot time from first allowed answer until actual reaction
 myDataTraining$reactionTime=myDataTraining$reactionTime2-myDataTraining$firstAllowedAnswerTime
-generateTableAndGraphsForCondition(myDataTraining,"TrainingGroupFirstAllowedAnswerTimeDifference",TRUE,TRUE,"Group")
+generateTableAndGraphsForCondition(myDataTraining,"TrainingGroupComparisonTime",TRUE,TRUE,"Group",ylab="Comparison Time(ms)")
 #plot rotationSpeed instead of reaction Time
 myDataTraining$reactionTime=abs(myDataTraining$rotationSpeed)
-generateTableAndGraphsForCondition(myDataTraining,"TrainingGroupRotationSpeed",TRUE,TRUE,"Group")
+generateTableAndGraphsForCondition(myDataTraining,"TrainingGroupRotationSpeed",TRUE,TRUE,"Group",ylab="Rotation speed (°/s)")
 #plot numberOfSwitches instead of reaction Time
 myDataTraining$reactionTime=myDataTraining$numberOfSwitches
-generateTableAndGraphsForCondition(myDataTraining,"TrainingGroupNumberOfSwitches",TRUE,TRUE,"Group")
+generateTableAndGraphsForCondition(myDataTraining,"TrainingGroupNumberOfSwitches",TRUE,TRUE,"Group",ylab="Number of switches")
+#plot short direction proportion
+ggplot(myData,aes(shortDirectionPropByID,color=group)) + geom_histogram(binwidth=0.05) +xlab("Proportion of rotations in short direction") + ylab("Count") + theme_bw()
+
 
 #plot side differences
 myData$cond=myData$correct_response

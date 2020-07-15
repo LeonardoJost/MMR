@@ -49,10 +49,15 @@ summarizeTrainingData=function(dataset,verbose){
       dataIdTime=dataIdTime[order(dataIdTime$reactionTime),]
       #get first entry -> starting degrees
       startTime=min(dataIdTime$reactionTime)
-      startDegrees=dataIdTime$deg[which(dataIdTime$reactionTime==startTime)]
+      #get starting degrees: to avoid accidental turns at beginning, take mode of first 5
+      #in case of conflict, get first
+      startDegrees=mode(dataIdTime$deg[1:5])
+      #get position of mode: if a turn in the first 5 frames happens voluntarily
+      startDegreesTime=min(dataIdTime$reactionTime[which(dataIdTime$deg==startDegrees)])
+      #startDegrees=dataIdTime$deg[which(dataIdTime$reactionTime==startTime)]
       #get last time where degree==startDegree
       # -> get time of first deviation
-      firstDeviationTime=min(dataIdTime$reactionTime[which(abs(dataIdTime$deg-startDegrees)>1)])-startTime
+      firstDeviationTime=min(dataIdTime$reactionTime[which(dataIdTime$reactionTime>startDegreesTime & abs(dataIdTime$deg-startDegrees)>1)])-startTime
       #subtract average time between stimuli to get the estimated last showing before (important for trainingType 3)
       firstDeviationTime=firstDeviationTime-mean(diff(dataIdTime$reactionTime[which(dataIdTime$reactionTime>startTime)]))
       #get finish time -> angle small enough that answer is allowed (<10 or >350) or jump over 360
@@ -101,15 +106,18 @@ summarizeTrainingData=function(dataset,verbose){
 summarizeTrainingDataByID=function(dataset){
   dataset$firstDeviationTimeAvgByID=NA
   dataset$rotationSpeedAbsAvgByID=NA
+  dataset$shortDirectionPropByID=NA
   dataset$numberOfSwitchesByID=NA
   dataset$numberOfTrainingTrialsByID=NA
   dataset$numberOfPretestTrialsByID=NA
   for(thisID in unique(dataset$ID)) {
-    dataset$firstDeviationTimeAvgByID[which(dataset$ID==thisID)]=mean(dataset$firstDeviationTime[which(dataset$ID==thisID & dataset$block=="training")])
-    dataset$rotationSpeedAbsAvgByID[which(dataset$ID==thisID)]=mean(abs(dataset$rotationSpeed[which(dataset$ID==thisID & dataset$block=="training")]))
-    dataset$numberOfSwitchesByID[which(dataset$ID==thisID)]=mean(dataset$numberOfSwitches[which(dataset$ID==thisID & dataset$block=="training")])
-    dataset$numberOfTrainingTrialsByID[which(dataset$ID==thisID)]=nrow(dataset[which(dataset$ID==thisID & dataset$block=="training"),])
-    dataset$numberOfPretestTrialsByID[which(dataset$ID==thisID)]=nrow(dataset[which(dataset$ID==thisID & dataset$block=="preTest"),])
+    datasetID=dataset[which(dataset$ID==thisID),]
+    dataset$firstDeviationTimeAvgByID[which(dataset$ID==thisID)]=mean(datasetID$firstDeviationTime[which(datasetID$block=="training")])
+    dataset$rotationSpeedAbsAvgByID[which(dataset$ID==thisID)]=mean(abs(datasetID$rotationSpeed[which(datasetID$block=="training")]))
+    dataset$shortDirectionPropByID[which(dataset$ID==thisID)]=nrow(datasetID[which(datasetID$shortDirection  & datasetID$deg!=180),])/nrow(datasetID[which(datasetID$block=="training" & datasetID$deg!=180),])
+    dataset$numberOfSwitchesByID[which(dataset$ID==thisID)]=mean(datasetID$numberOfSwitches[which(datasetID$block=="training")])
+    dataset$numberOfTrainingTrialsByID[which(dataset$ID==thisID)]=nrow(datasetID[which(datasetID$block=="training"),])
+    dataset$numberOfPretestTrialsByID[which(dataset$ID==thisID)]=nrow(datasetID[which(datasetID$block=="preTest"),])
   }
   return(dataset)
 }

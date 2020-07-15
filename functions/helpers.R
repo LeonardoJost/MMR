@@ -76,14 +76,23 @@ meanMode=function(vec,narm=TRUE,digitsFormat=4) {
   if(is.numeric(vec))
     return(meanSd(vec,narm,digitsFormat))
   else
-    return(modes(vec))
+    return(modesString(vec))
+}
+#return mode (most occuring element), in case of conflict, return first occuring
+mode = function(vec) {
+  uniques = unique(vec)
+  return(uniques[which.max(tabulate(match(vec, uniques)))])
 }
 
-#return modes as string in decreasing order
+#return all elements and number of occurences
 modes = function(vec) {
   dat=as.data.frame(table(vec))
-  dat=dat[order(dat$Freq,decreasing=TRUE),]
-  paste(paste(dat$vec,dat$Freq,sep=":"),collapse=",")
+  return(dat[order(dat$Freq, as.numeric(row.names(dat)),decreasing=TRUE),])
+}
+#return modes as string in decreasing order
+modesString=function(vec) {
+  dat=modes(vec)
+  return(paste(paste(dat$vec,dat$Freq,sep=":"),collapse=","))
 }
 #return mean(sd) as string
 meanSd=function(vec,narm=TRUE,digitsFormat=4) {

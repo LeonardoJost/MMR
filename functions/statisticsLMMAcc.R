@@ -34,4 +34,21 @@ save(aBase,aBase.summary,file="statmodels/AccModelaBase.RData")
 
 
 #nonsignificant effects
-
+#Gender
+aGender=glmer((type=="hit")~endTime*block+
+              degY*endTime*group+
+              degZ*block+Gender+
+              (deg+endTime+deg*endTime|ID)+(deg+endTime|modelNumber),family=binomial(),data=dataset.acc,control = glmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+anova(aBase,aGender)
+#Experience
+aExperience=glmer((type=="hit")~endTime*block+
+                degY*endTime*group+
+                degZ*block+Experience+
+                (deg+endTime+deg*endTime|ID)+(deg+endTime|modelNumber),family=binomial(),data=dataset.acc,control = glmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+anova(aBase,aExperience)
+#block*group
+aBlockXGroup=glmer((type=="hit")~endTime*block+
+                    degY*endTime*group+
+                    degZ*block+block*group+
+                    (deg+endTime+deg*endTime|ID)+(deg+endTime|modelNumber),family=binomial(),data=dataset.acc,control = glmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+anova(aBase,aBlockXGroup)

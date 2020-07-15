@@ -69,9 +69,5 @@ dataset$group=ifelse(dataset$trainingType==1,"wheel",ifelse(dataset$trainingType
 #save full dataset to csv
 write.table(dataset,file="output\\dataset.csv",sep=";", col.names=NA)
 
-##plot reaction time and accuracy by interesting conditions
-#rename interesting variable to cond and generate plots
-dataset$cond=dataset$correctSide
-generateTableAndGraphsForCondition(dataset,"side")
-dataset$cond=paste(dataset$correctSide,dataset$axis,dataset$block,sep="*")
-generateTableAndGraphsForCondition(dataset,"sideXaxisXblock")
+##create datasets for analysis and plot reaction time and accuracy by interesting conditions
+source("functions/createDatasets.R", encoding="utf-8")

@@ -17,7 +17,7 @@
 source("functions/helpers.R")
 
 #generate table and graphs for cond from MRData dataset
-generateTableAndGraphsForCondition=function(MRData,conditionString,degreeGraphs=TRUE,timeGraphs=TRUE,legendTitle="cond",lineTypes=FALSE){
+generateTableAndGraphsForCondition=function(MRData,conditionString,degreeGraphs=TRUE,timeGraphs=TRUE,legendTitle="cond",lineTypes=FALSE,ylab="Reaction time(ms)"){
   #calculate means by angle and interesting condition (important for plotting accuracy)
   #careful with outliers
   library(plyr)
@@ -46,20 +46,20 @@ generateTableAndGraphsForCondition=function(MRData,conditionString,degreeGraphs=
   #generate plots
   if (degreeGraphs) {
     #all data
-    generateGraphs(MRData,paste("MR/allData/",conditionString,sep=""),legendTitle)
+    generateGraphs(MRData,paste("MR/allData/",conditionString,sep=""),legendTitle,ylab)
     #average by participants
-    generateGraphs(MRDataMeansByIDDegcond,paste("MR/meanData/",conditionString,sep=""),legendTitle)
+    generateGraphs(MRDataMeansByIDDegcond,paste("MR/meanData/",conditionString,sep=""),legendTitle,ylab)
     #accuracy is always only for averages
     generateAccGraphs(MRDataMeansByIDDegcond,paste("MR/accData/",conditionString,sep=""),legendTitle)
   }
   if (timeGraphs) {
     #plot line graphs for changes over time
-    generateLineGraphsByTime(MRData[which(MRData$typeOutlier=="hit"),],paste("MR/Timed/",conditionString,sep=""),legendTitle,lineTypes)
+    generateLineGraphsByTime(MRData[which(MRData$typeOutlier=="hit"),],paste("MR/Timed/",conditionString,sep=""),legendTitle,lineTypes,ylab)
   }
 }
 
 #generate reaction time graphs
-generateGraphs=function(dataset,title,legendTitle="cond") {
+generateGraphs=function(dataset,title,legendTitle="cond",ylab="Reaction time(ms)") {
   library(ggplot2)
   #plot data as line graph (mean Data by degree and condition)
   ggplot(dataset,aes(y=reactionTime,x=deg,group=deg,fill=cond, color=cond, linetype=cond, shape=cond)) + 
@@ -67,13 +67,13 @@ generateGraphs=function(dataset,title,legendTitle="cond") {
     stat_summary(na.rm=TRUE, fun=mean, geom="point", size=2,aes(group=cond,color=cond)) +
     stat_summary(fun.data=mean_cl_normal,geom="errorbar", width=0.2,aes(group=cond,color=cond)) +
     scale_x_continuous(breaks=c(0:4)*45)+
-    labs(x="degrees(°)",y="Reaction Time(ms)",color=legendTitle,fill=legendTitle,linetype=legendTitle,shape=legendTitle) + 
+    labs(x="degrees(°)",y=ylab,color=legendTitle,fill=legendTitle,linetype=legendTitle,shape=legendTitle) + 
     theme_bw() + theme(legend.position = "bottom")
   ggsave(paste("figs/",title,"LinePlotByCondDegree.png",sep=""))
 }
 
 #generate lins graphs by time
-generateLineGraphsByTime=function(dataset,title,legendTitle="cond",lineTypes=FALSE) {
+generateLineGraphsByTime=function(dataset,title,legendTitle="cond",lineTypes=FALSE,ylab="Reaction time(ms)") {
   if(lineTypes){
     condForLineTypes=dataset$condForLineTypes
   } else {
@@ -83,13 +83,13 @@ generateLineGraphsByTime=function(dataset,title,legendTitle="cond",lineTypes=FAL
   #plot data as line graph (mean Data by degree and condition)
   ggplot(dataset,aes(y=reactionTime,x=endTime, color=condForLineTypes, linetype=condForLineTypes)) + 
     geom_smooth(aes(group=cond,fill=condForLineTypes)) +
-    labs(x="time(min)",y="Reaction Time(ms)",color=legendTitle,linetype=legendTitle,fill=legendTitle) +
+    labs(x="time(min)",y=ylab,color=legendTitle,linetype=legendTitle,fill=legendTitle) +
     theme_bw() +theme(legend.position = "bottom")
   ggsave(paste("figs/",title,"LinePlotByCondTime.png",sep=""))
   #plot again with linear smoothing
   ggplot(dataset,aes(y=reactionTime,x=endTime, color=condForLineTypes, linetype=condForLineTypes)) + 
     geom_smooth(aes(group=cond,fill=condForLineTypes),method="lm") +
-    labs(x="time(min)",y="Reaction Time(ms)",color=legendTitle,linetype=legendTitle,fill=legendTitle) +
+    labs(x="time(min)",y=ylab,color=legendTitle,linetype=legendTitle,fill=legendTitle) +
     theme_bw() +theme(legend.position = "bottom")
   ggsave(paste("figs/",title,"LinePlotByCondTimeLinear.png",sep=""))
 }

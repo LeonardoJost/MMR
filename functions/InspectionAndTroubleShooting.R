@@ -53,4 +53,11 @@ for(group in levels(as.factor(trainingTrialsByID$group))) {
   print(group)
   print(meanMode(trainingTrialsByID$numberOfTrainingTrialsByID[which(trainingTrialsByID$group==group)],TRUE,5))
 }
-  
+
+
+#inpsecting starting times in training
+trainingTimes=MRDataTrainingSummary[which(MRDataTrainingSummary$firstDeviationTime<100),]
+nrow(trainingTimes)
+oneTrainingTrial=MRDataTraining[which(MRDataTraining$duration==trainingTimes$startTime[65]),]
+plot(oneTrainingTrial$response_time,toNumeric(oneTrainingTrial$angle))
+oneSummary=summarizeTrainingData(oneTrainingTrial,5)
