@@ -103,6 +103,18 @@ mPostTest.summary=modelSummary(mPostTest)
 #all significant
 plot(mPostTest)
 save(mPostTest,mPostTest.summary,file="statmodels/RTmPostTest.RData")
+#gender effects
+mPostTestGender=lmer(reactionTime~endTime*group+degY*group+
+                       deg*correct_response+deg*endTime+Gender+
+                       (deg+endTime|ID)+(1|modelNumber),
+                     data=dataset.rt.postTest,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+anova(mPostTest,mPostTestGender)
+#experience effects
+mPostTestExperience=lmer(reactionTime~endTime*group+degY*group+
+                       deg*correct_response+deg*endTime+Experience+
+                       (deg+endTime|ID)+(1|modelNumber),
+                     data=dataset.rt.postTest,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+anova(mPostTest,mPostTestExperience)
 #pretest
 mPreTest1=lmer(reactionTime~degY*endTime*group+
                  deg*correct_response+deg*endTime+
@@ -162,6 +174,13 @@ mPreTest.summary=modelSummary(mPreTest)
 #all significant
 plot(mPreTest)
 save(mPreTest,mPreTest.summary,file="statmodels/RTmPreTest.RData")
+#gender effects
+mPreTestGender=lmer(reactionTime~degY+endTime+
+                deg*correct_response+
+                Experience+Gender+
+                (deg+endTime|ID)+(1|modelNumber),
+              data=dataset.rt.preTest,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+anova(mPreTest,mPreTestGender)
 
 
 
