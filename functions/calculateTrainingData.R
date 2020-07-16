@@ -104,6 +104,8 @@ summarizeTrainingData=function(dataset,verbose){
 #summarizes training data by ID
 #dataset: dataset containing all summarized training stimuli
 summarizeTrainingDataByID=function(dataset){
+  dataset$comparisonTime=dataset$reactionTime-dataset$firstAllowedAnswerTime
+  dataset$comparisonTimeAvgByID=NA
   dataset$firstDeviationTimeAvgByID=NA
   dataset$rotationSpeedAbsAvgByID=NA
   dataset$shortDirectionPropByID=NA
@@ -112,20 +114,13 @@ summarizeTrainingDataByID=function(dataset){
   dataset$numberOfPretestTrialsByID=NA
   for(thisID in unique(dataset$ID)) {
     datasetID=dataset[which(dataset$ID==thisID),]
+    dataset$comparisonTimeAvgByID[which(dataset$ID==thisID)]=mean(datasetID$comparisonTime[which(datasetID$block=="training")])
     dataset$firstDeviationTimeAvgByID[which(dataset$ID==thisID)]=mean(datasetID$firstDeviationTime[which(datasetID$block=="training")])
     dataset$rotationSpeedAbsAvgByID[which(dataset$ID==thisID)]=mean(abs(datasetID$rotationSpeed[which(datasetID$block=="training")]))
-    dataset$shortDirectionPropByID[which(dataset$ID==thisID)]=nrow(datasetID[which(datasetID$shortDirection  & datasetID$deg!=180),])/nrow(datasetID[which(datasetID$block=="training" & datasetID$deg!=180),])
+    dataset$shortDirectionPropByID[which(dataset$ID==thisID)]=nrow(datasetID[which(datasetID$shortDirection & datasetID$block=="training" & datasetID$deg!=180),])/nrow(datasetID[which(datasetID$block=="training" & datasetID$deg!=180),])
     dataset$numberOfSwitchesByID[which(dataset$ID==thisID)]=mean(datasetID$numberOfSwitches[which(datasetID$block=="training")])
     dataset$numberOfTrainingTrialsByID[which(dataset$ID==thisID)]=nrow(datasetID[which(datasetID$block=="training"),])
     dataset$numberOfPretestTrialsByID[which(dataset$ID==thisID)]=nrow(datasetID[which(datasetID$block=="preTest"),])
   }
   return(dataset)
 }
-
-#dataset=MRDataTraining
-#thisID=unique(dataset$ID)[1]
-#thisID=id46
-#dataId=dataset[which(dataset$ID==thisID),]
-#thisStartTime=unique(dataId$startTime)[1]
-#thisStartTime=301256
-#print(paste(startTime,startDegrees,firstDeviationTime,firstAllowedAnswerTime,firstAllowedAnswerDegrees,rotationSpeed,numberOfSwitches,sep=", "))
