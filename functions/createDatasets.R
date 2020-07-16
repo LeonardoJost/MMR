@@ -90,7 +90,7 @@ dataset.acc.Training$deg=dataset.acc.Training$deg-mean(dataset.acc.Training$deg)
 dataset.TrainingButtonsWheel=dataset.acc.Training[which(dataset.acc.Training$group!="visual"),]
 dataset.acc.Training$comparisonTime=dataset.acc.Training$reactionTime-dataset.acc.Training$firstAllowedAnswerTime
 
-
+##Plots
 #plot block*group interaction over time for pre/posttest
 myData$cond=paste(myData$group,myData$block,sep="*")
 myData$condForLineTypes=myData$group

@@ -1,4 +1,4 @@
-### Model generation for statistical analysis including 0° cases
+### Model generation for statistical analysis of accuracy
 #     Copyright (C) 2019  Leonardo Jost
 # 
 # This program is free software: you can redistribute it and/or modify
