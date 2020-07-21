@@ -144,6 +144,27 @@ calculateMeansQuestionaire=function(verbose,questionaireData,questionaireOutFile
   }
 }
 
+#combine multiple images into one
+combineImages=function(imagesList,rows,columns,outputFile,outputWidth=1028){
+  library(png) #for reading in PNGs
+  # setup plot
+  par(mai=rep(0,4)) # no margins
+  
+  # layout the plots into a matrix
+  layout(matrix(1:(rows*columns), ncol=columns, byrow=TRUE))
+  
+  # do the plotting
+  for(i in 1:(rows*columns)) {
+    img =readPNG(imagesList[i])
+    plot(NA,xlim=0:1,ylim=0:1,bty="n",axes=0,xaxs = 'i',yaxs='i')
+    rasterImage(img,0,0,1,1)
+  }
+  
+  # write to new image
+  dev.print(png,outputFile,width=outputWidth)
+  dev.off()
+}
+
 #### other graphs (mostly boxplots)
 
 #accuracy graphs

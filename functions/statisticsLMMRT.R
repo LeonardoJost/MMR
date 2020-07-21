@@ -62,7 +62,28 @@ mBlockGroup=lmer(reactionTime~degY*endTime*block*group-block:group+
                        Gender*block+Experience*block+
                        (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
 anova(mBlockGroup,mBase)
-
+summary(mBlockGroup)
+#main effect of deg*time is the same as degZ*time
+mDegXTime=lmer(reactionTime~degY*endTime*block*group+
+             degZ*block+
+             deg*correct_response+degZ*endTime+
+             Gender*block+Experience*block+
+             (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+anova(mBase,mDegXTime)
+summary(mDegXTime)
+#main effect of block
+mBlock=lmer(reactionTime~degY*endTime*block*group+
+                 degZ*block+
+                 deg*correct_response+deg*endTime+
+                 Gender*block+Experience*block-block+
+                 (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+anova(mBlock,mBase)
+#average effect size of block
+mBlockE=lmer(reactionTime~degY*endTime*group+
+              deg*correct_response+deg*endTime+
+              Gender+Experience+block+
+              (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+mBlockE.summary=modelSummary(mBlockE)
 #nonsignificant effects
 
 
@@ -109,12 +130,15 @@ mPostTestGender=lmer(reactionTime~endTime*group+degY*group+
                        (deg+endTime|ID)+(1|modelNumber),
                      data=dataset.rt.postTest,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
 anova(mPostTest,mPostTestGender)
+summary(mPostTestGender)
 #experience effects
 mPostTestExperience=lmer(reactionTime~endTime*group+degY*group+
                        deg*correct_response+deg*endTime+Experience+
                        (deg+endTime|ID)+(1|modelNumber),
                      data=dataset.rt.postTest,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
 anova(mPostTest,mPostTestExperience)
+summary(mPostTestExperience)
+
 #pretest
 mPreTest1=lmer(reactionTime~degY*endTime*group+
                  deg*correct_response+deg*endTime+
@@ -181,7 +205,7 @@ mPreTestGender=lmer(reactionTime~degY+endTime+
                 (deg+endTime|ID)+(1|modelNumber),
               data=dataset.rt.preTest,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
 anova(mPreTest,mPreTestGender)
-
+summary(mPreTestGender)
 
 
 

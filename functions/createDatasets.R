@@ -105,24 +105,29 @@ generateTableAndGraphsForCondition(myDataTraining,"TrainingGroup",TRUE,TRUE,"Gro
 #plot firstDeviationTime instead of reaction Time
 myDataTraining$reactionTime2=myDataTraining$reactionTime
 myDataTraining$reactionTime=myDataTraining$firstDeviationTime
-generateTableAndGraphsForCondition(myDataTraining,"TrainingGroupPlanningTime",TRUE,TRUE,"Group",ylab="Planning Time(ms)")
+generateTableAndGraphsForCondition(myDataTraining[which(myDataTraining$group!="visual"),],"TrainingGroupPlanningTime",TRUE,TRUE,"Group",ylab="Planning Time(ms)")
 #plot time from first allowed answer until actual reaction
 myDataTraining$reactionTime=myDataTraining$reactionTime2-myDataTraining$firstAllowedAnswerTime
 generateTableAndGraphsForCondition(myDataTraining,"TrainingGroupComparisonTime",TRUE,TRUE,"Group",ylab="Comparison Time(ms)")
 #plot rotationSpeed instead of reaction Time
 myDataTraining$reactionTime=abs(myDataTraining$rotationSpeed)
-generateTableAndGraphsForCondition(myDataTraining,"TrainingGroupRotationSpeed",TRUE,TRUE,"Group",ylab="Rotation speed (°/s)")
+generateTableAndGraphsForCondition(myDataTraining[which(myDataTraining$group!="visual"),],"TrainingGroupRotationSpeed",TRUE,TRUE,"Group",ylab="Rotation speed (°/s)")
 #plot numberOfSwitches instead of reaction Time
 myDataTraining$reactionTime=myDataTraining$numberOfSwitches
-generateTableAndGraphsForCondition(myDataTraining,"TrainingGroupNumberOfSwitches",TRUE,TRUE,"Group",ylab="Number of switches")
+generateTableAndGraphsForCondition(myDataTraining[which(myDataTraining$group!="visual"),],"TrainingGroupNumberOfSwitches",TRUE,TRUE,"Group",ylab="Number of switches")
 #plot short direction proportion
-ggplot(myData,aes(shortDirectionPropByID,color=group)) + geom_histogram(binwidth=0.05) +xlab("Proportion of rotations in short direction") + ylab("Count") + theme_bw()
-
+ggplot(unique(myData[which(myData$group!="visual"),c("ID","shortDirectionPropByID","group")]),aes(shortDirectionPropByID,fill=group)) + 
+  geom_histogram(binwidth=0.05, position='identity', alpha=0.6) +xlab("Proportion of rotations in short direction") + ylab("Count") + theme_bw()
+ggsave(paste("figs/MR/TrainingPropShortDirectionHistogram.png",sep=""))
 
 #plot side differences
 myData$cond=myData$correct_response
 generateTableAndGraphsForCondition(myData,"side")
 
-#plot axis differences
-
-#plot four-way-interaction
+#combine multiple plots into one
+#quite slow, other programs are probably better suited
+imagesList=c("figs/MR/TrainingPropShortDirectionHistogram.png",
+             "figs/MR/TrainingPropShortDirectionHistogram.png",
+             "figs/MR/TrainingPropShortDirectionHistogram.png",
+             "figs/MR/TrainingPropShortDirectionHistogram.png")
+combineImages(imagesList,2,2,"figs/combined.png")

@@ -58,6 +58,7 @@ mTrainedModels4=lmer(reactionTime~endTime*group+degY*group+
                        (deg+endTime|ID)+(1|modelNumber),
                      data=dataset.rt.postTest,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
 anova(mPostTest,mTrainedModels,mTrainedModels2,mTrainedModels3,mTrainedModels4)
+anova(mTrainedModels3,mTrainedModels4)
 mTrainedModels4.summary=modelSummary(mTrainedModels4)
 save(mTrainedModels4,mTrainedModels4.summary,file="statmodels/RTmTrainedModels.RData")
 
