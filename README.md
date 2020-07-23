@@ -1,9 +1,12 @@
 # MMR
-Project for the manual training of the mental rotation test of Jost and Jansen (2019). Contains both code for conducting the experiment as well as code for reading and analyzing the data in R and the resulting dataset.
+Project for the manual training of the mental rotation test of Jost and Jansen (2020). Contains both code for conducting the experiment as well as code for reading and analyzing the data in R and the resulting dataset.
 
 Code is based on the code at https://github.com/LeonardoJost/MRExperiment
 
+A linked OSF project is at https://osf.io/hxa2s/
+
 ## Conducting the Experiment
+The code in this repository contains bugfixes. The version used in the experiment is available in the osf project.
 The experiment is programmed for use with a steering wheel. The experiment was conducted using a Thrustmaster T150RS and the settings are chosen accordingly.
 The experiment contains a pre and post test and three possible training conditions in between and a questionaire after all tests.
 ### OpenSesame
@@ -22,4 +25,10 @@ The blocks are by default controlled by time and the number of stimuli. If eithe
 ## R Code
 R code is in all other files.
 
-R code will read data from files in the specified folder and do some calculations (average participant data, outlier detection for mental rotation data, plotting and averages for mental rotation data) and contains code for basic statistical analysis using linear mixed models (has to be adapted to individual case).
+R code will read and manipulate data, create graphs and tables, and perform statistical analysis. Statistical models containing confidence intervals are saved in the folder statmodels.
+The resulting dataset and average data of participants is saved in the folder dataset. Images and summarized data can be generated using the createDatasets.R script.
+
+## Literature
+Jost, L., & Jansen, P. (2020). A novel approach to analyzing all trials in chronometric mental rotation and description of a flexible extended library of stimuli. Spatial Cognition & Computation. DOI: 10.1080/13875868.2020.1754833
+
+Mathôt, S., Schreij, D., & Theeuwes, J. (2012). OpenSesame: An open-source, graphical experiment builder for the social sciences. Behavior Research Methods, 44(2), 314-324. doi:10.3758/s13428-011-0168-7
