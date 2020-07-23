@@ -30,7 +30,6 @@ myData=myData[which(myData$block!="training"),]
 myData[which(myData$endTime>10.1),]
 #subtract 10 minutes from preTest times to set transition between tests to 0
 myData[which(myData$block=="preTest"),"endTime"]=myData[which(myData$block=="preTest"),"endTime"]-10
-myDataTraining$endTime=myDataTraining$endTime-10
 #separate rotation angle by axis
 myData$degY=myData$deg*(myData$axis=="y")
 myData$degZ=myData$deg*(myData$axis=="z")
@@ -117,7 +116,7 @@ myDataTraining$reactionTime=myDataTraining$numberOfSwitches
 generateTableAndGraphsForCondition(myDataTraining[which(myDataTraining$group!="visual"),],"TrainingGroupNumberOfSwitches",TRUE,TRUE,"Group",ylab="Number of switches")
 #plot short direction proportion
 ggplot(unique(myData[which(myData$group!="visual"),c("ID","shortDirectionPropByID","group")]),aes(shortDirectionPropByID,fill=group)) + 
-  geom_histogram(binwidth=0.05, position='identity', alpha=0.6) +xlab("Proportion of rotations in short direction") + ylab("Count") + theme_bw()
+  geom_histogram(binwidth=0.05, position='identity', alpha=0.6) +xlab("Proportion of rotations in short direction") + ylab("Number of participants") + theme_bw()+theme(legend.position = "bottom")
 ggsave(paste("figs/MR/TrainingPropShortDirectionHistogram.png",sep=""))
 
 #plot side differences
@@ -126,8 +125,12 @@ generateTableAndGraphsForCondition(myData,"side")
 
 #combine multiple plots into one
 #quite slow, other programs are probably better suited
-imagesList=c("figs/MR/TrainingPropShortDirectionHistogram.png",
-             "figs/MR/TrainingPropShortDirectionHistogram.png",
-             "figs/MR/TrainingPropShortDirectionHistogram.png",
+imagesList=c("figs/MR/accData/TrainingGroupLinePlotByCondDegree.png",
+             "figs/MR/meanData/TrainingGroupLinePlotByCondDegree.png",
+             "figs/MR/Timed/TrainingGroupLinePlotByCondTime.png",
+             "figs/MR/Timed/TrainingGroupPlanningTimeLinePlotByCondTime.png",
+             "figs/MR/Timed/TrainingGroupRotationSpeedLinePlotByCondTime.png",
+             "figs/MR/Timed/TrainingGroupNumberOfSwitchesLinePlotByCondTime.png",
+             "figs/MR/Timed/TrainingGroupComparisonTimeLinePlotByCondTime.png",
              "figs/MR/TrainingPropShortDirectionHistogram.png")
-combineImages(imagesList,2,2,"figs/combined.png")
+combineImages(imagesList,rows=2,columns=4,"figs/combined.png")

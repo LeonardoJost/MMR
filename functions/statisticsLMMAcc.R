@@ -31,7 +31,11 @@ aBase.summary=modelSummary(aBase)
 save(aBase,aBase.summary,file="statmodels/AccModelaBase.RData")
 
 #split interactions
-
+aBlock=glmer((type=="hit")~endTime*block+
+               degY*endTime*group+
+               degZ*block-block+
+               (deg+endTime+deg*endTime|ID)+(deg+endTime|modelNumber),family=binomial(),data=dataset.acc,control = glmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+anova(aBase,aBlock)
 
 #nonsignificant effects
 #Gender
@@ -52,3 +56,4 @@ aBlockXGroup=glmer((type=="hit")~endTime*block+
                     degZ*block+block*group+
                     (deg+endTime+deg*endTime|ID)+(deg+endTime|modelNumber),family=binomial(),data=dataset.acc,control = glmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
 anova(aBase,aBlockXGroup)
+save(aBlock,aGender,aExperience,aBlockXGroup,file="statmodels/AccModelComparison.RData")

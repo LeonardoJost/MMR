@@ -161,7 +161,7 @@ combineImages=function(imagesList,rows,columns,outputFile,outputWidth=1028){
   }
   
   # write to new image
-  dev.print(png,outputFile,width=outputWidth)
+  dev.print(png,outputFile,width=outputWidth*columns,height=outputWidth*rows)
   dev.off()
 }
 
