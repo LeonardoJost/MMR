@@ -21,14 +21,22 @@ generateTableAndGraphsForCondition=function(MRData,conditionString,degreeGraphs=
   #calculate means by angle and interesting condition (important for plotting accuracy)
   #careful with outliers
   library(plyr)
+  if(is.null(MRData$cond2))
+    MRData$cond2=1
   #averages for each participant and condition
   MRDataMeansByIDDegcond=ddply(MRData,
                                .(ID,deg,cond),
                                summarize,
-                               reactionTime=weighted.mean(reactionTime,typeOutlier=="hit"),
-                               hits=sum(typeOutlier=="hit"),
-                               misses=sum(typeOutlier=="incorrect"),
-                               acc=hits/(hits+misses),
+                               reactionTime1=weighted.mean(reactionTime,(typeOutlier=="hit")*cond2),
+                               reactionTime2=max(c(0,weighted.mean(reactionTime,(typeOutlier=="hit")*(1-cond2))),na.rm=T),
+                               reactionTime=reactionTime1-reactionTime2,
+                               hits1=sum((typeOutlier=="hit")*cond2),
+                               misses1=sum((typeOutlier=="incorrect")*cond2),
+                               acc1=hits1/(hits1+misses1),
+                               hits2=sum((typeOutlier=="hit")*(1-cond2)),
+                               misses2=sum((typeOutlier=="incorrect")*(1-cond2)),
+                               acc2=max(c(0,hits2/(hits2+misses2)),na.rm=T),
+                               acc=acc1-acc2,
                                outliers=sum(outlier))
   #average and sd over all participants
   MRDataMeansByDegcond=ddply(MRDataMeansByIDDegcond,
@@ -60,20 +68,32 @@ generateTableAndGraphsForCondition=function(MRData,conditionString,degreeGraphs=
 
 #generate reaction time graphs
 generateGraphs=function(dataset,title,legendTitle="cond",ylab="Reaction time(ms)") {
+  if(legendTitle=="none")
+    pos="none"
+  else
+    pos="bottom"
   library(ggplot2)
   #plot data as line graph (mean Data by degree and condition)
   ggplot(dataset,aes(y=reactionTime,x=deg,group=deg,fill=cond, color=cond, linetype=cond, shape=cond)) + 
     stat_summary(na.rm=TRUE, fun=mean, geom="line",  aes(group=cond,color=cond)) +
     stat_summary(na.rm=TRUE, fun=mean, geom="point", size=2,aes(group=cond,color=cond)) +
-    stat_summary(fun.data=mean_cl_normal,geom="errorbar", width=0.2,aes(group=cond,color=cond)) +
+    stat_summary(fun.data=mean_cl_normal,geom="errorbar", width=5,aes(group=cond,color=cond)) +
     scale_x_continuous(breaks=c(0:4)*45)+
     labs(x="degrees(°)",y=ylab,color=legendTitle,fill=legendTitle,linetype=legendTitle,shape=legendTitle) + 
-    theme_bw() + theme(legend.position = "bottom")
+    theme_bw() + theme(legend.position = pos) + 
+    scale_colour_discrete(drop=TRUE,limits = levels(dataset$cond)) + 
+    scale_linetype_discrete(drop=TRUE,limits = levels(dataset$cond)) + 
+    scale_shape_discrete(drop=TRUE,limits = levels(dataset$cond)) + 
+    scale_fill_discrete(drop=TRUE,limits = levels(dataset$cond))
   ggsave(paste("figs/",title,"LinePlotByCondDegree.png",sep=""))
 }
 
 #generate lins graphs by time
 generateLineGraphsByTime=function(dataset,title,legendTitle="cond",lineTypes=FALSE,ylab="Reaction time(ms)") {
+  if(legendTitle=="none")
+    pos="none"
+  else
+    pos="bottom"
   if(lineTypes){
     condForLineTypes=dataset$condForLineTypes
   } else {
@@ -84,27 +104,43 @@ generateLineGraphsByTime=function(dataset,title,legendTitle="cond",lineTypes=FAL
   ggplot(dataset,aes(y=reactionTime,x=endTime, color=condForLineTypes, linetype=condForLineTypes)) + 
     geom_smooth(aes(group=cond,fill=condForLineTypes)) +
     labs(x="time(min)",y=ylab,color=legendTitle,linetype=legendTitle,fill=legendTitle) +
-    theme_bw() +theme(legend.position = "bottom")
+    theme_bw() +theme(legend.position = pos) + 
+    scale_colour_discrete(drop=TRUE,limits = levels(dataset$cond)) + 
+    scale_linetype_discrete(drop=TRUE,limits = levels(dataset$cond)) + 
+    scale_shape_discrete(drop=TRUE,limits = levels(dataset$cond)) + 
+    scale_fill_discrete(drop=TRUE,limits = levels(dataset$cond))
   ggsave(paste("figs/",title,"LinePlotByCondTime.png",sep=""))
   #plot again with linear smoothing
   ggplot(dataset,aes(y=reactionTime,x=endTime, color=condForLineTypes, linetype=condForLineTypes)) + 
     geom_smooth(aes(group=cond,fill=condForLineTypes),method="lm") +
     labs(x="time(min)",y=ylab,color=legendTitle,linetype=legendTitle,fill=legendTitle) +
-    theme_bw() +theme(legend.position = "bottom")
+    theme_bw() +theme(legend.position = pos) + 
+    scale_colour_discrete(drop=TRUE,limits = levels(dataset$cond)) + 
+    scale_linetype_discrete(drop=TRUE,limits = levels(dataset$cond)) + 
+    scale_shape_discrete(drop=TRUE,limits = levels(dataset$cond)) + 
+    scale_fill_discrete(drop=TRUE,limits = levels(dataset$cond))
   ggsave(paste("figs/",title,"LinePlotByCondTimeLinear.png",sep=""))
 }
 
 #generate graphs for accuracy
 generateAccGraphs=function(dataset,title,legendTitle="cond") {
+  if(legendTitle=="none")
+    pos="none"
+  else
+    pos="bottom"
   library(ggplot2)
   #plot data as line graph (mean Data by degree and condition)
   ggplot(dataset,aes(y=acc,x=deg,group=deg,fill=cond, color=cond, linetype=cond, shape=cond)) + 
     stat_summary(na.rm=TRUE, fun=mean, geom="line",  aes(group=cond,color=cond)) +
     stat_summary(na.rm=TRUE, fun=mean, geom="point", size=2,aes(group=cond,color=cond)) +
-    stat_summary(fun.data=mean_cl_normal,geom="errorbar", width=0.2,aes(group=cond,color=cond)) +
+    stat_summary(fun.data=mean_cl_normal,geom="errorbar", width=5,aes(group=cond,color=cond)) +
     scale_x_continuous(breaks=c(0:4)*45)+
     labs(x="degrees(°)",y="Proportion of correct answers",color=legendTitle,fill=legendTitle,linetype=legendTitle, shape=legendTitle) + 
-    theme_bw() + theme(legend.position = "bottom")
+    theme_bw() + theme(legend.position = pos) + 
+    scale_colour_discrete(drop=TRUE,limits = levels(dataset$cond)) + 
+    scale_linetype_discrete(drop=TRUE,limits = levels(dataset$cond)) + 
+    scale_shape_discrete(drop=TRUE,limits = levels(dataset$cond)) + 
+    scale_fill_discrete(drop=TRUE,limits = levels(dataset$cond))
   ggsave(paste("figs/",title,"LinePlotByCondDegree.png",sep=""))
   
 }
@@ -163,6 +199,7 @@ combineImages=function(imagesList,rows,columns,outputFile,outputWidth=1028){
   # write to new image
   dev.print(png,outputFile,width=outputWidth*columns,height=outputWidth*rows)
   dev.off()
+  gc()
 }
 
 #### other graphs (mostly boxplots)
