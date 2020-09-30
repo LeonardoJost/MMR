@@ -20,7 +20,7 @@ Questions should be entered the following way: (Type)(Options)(ID)(condition). T
 
 Instructions are shown for a fixed time before allowing continueing to the trials to prevent accidental skipping. The txt may contain a block preceeeded by (Continue), which is shown only after the fixed time and replaced by empty lines (containing single dots as a workaroung for text alignment) before.
 
-The blocks are by default controlled by time and the number of stimuli. If either all stimuli are processed or time is over, the experiment should finish. The transition between blocks is only controlled by time but can be changed to number of stimuli easily in the break if condition of the 'ShowStimuli' loop.
+The blocks are by default controlled by time and the number of stimuli. If either all stimuli are processed or time is over, the block should finish.
 
 ## R Code
 R code is in all other files.
