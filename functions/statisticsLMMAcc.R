@@ -44,16 +44,19 @@ aGender=glmer((type=="hit")~endTime*block+
               degZ*block+Gender+
               (deg+endTime+deg*endTime|ID)+(deg+endTime|modelNumber),family=binomial(),data=dataset.acc,control = glmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
 anova(aBase,aGender)
+aGender.summary=modelSummary(aGender)
 #Experience
 aExperience=glmer((type=="hit")~endTime*block+
                 degY*endTime*group+
                 degZ*block+Experience+
                 (deg+endTime+deg*endTime|ID)+(deg+endTime|modelNumber),family=binomial(),data=dataset.acc,control = glmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
 anova(aBase,aExperience)
+aExperience.summary=modelSummary(aExperience)
 #block*group
 aBlockXGroup=glmer((type=="hit")~endTime*block+
                     degY*endTime*group+
                     degZ*block+block*group+
                     (deg+endTime+deg*endTime|ID)+(deg+endTime|modelNumber),family=binomial(),data=dataset.acc,control = glmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
 anova(aBase,aBlockXGroup)
-save(aBlock,aGender,aExperience,aBlockXGroup,file="statmodels/AccModelComparison.RData")
+aBlockXGroup.summary=modelSummary(aBlockXGroup)
+save(aBlock,aGender.summary,aExperience.summary,aBlockXGroup.summary,file="statmodels/AccModelComparison.RData")
