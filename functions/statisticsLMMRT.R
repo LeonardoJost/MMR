@@ -41,6 +41,34 @@ mDegYTimeBlockGroup=lmer(reactionTime~endTime*block*group+degY*block*group+degY*
              (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
 mDegYTimeBlockGroup.summary=modelSummary(mDegYTimeBlockGroup)
 save(mDegYTimeBlockGroup,mDegYTimeBlockGroup.summary,file="statmodels/RTmDegYTimeBlockGroup.RData")
+#reduce to get degY*endTime
+mDegYTime1=lmer(reactionTime~endTime*block*group+degY*endTime+
+                 degZ*block+
+                 deg*correct_response+deg*endTime+
+                 Gender*block+Experience*block+
+                 (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+mDegYTime1.summary=modelSummary(mDegYTime1,0)
+mDegYTime2=lmer(reactionTime~block*group+endTime*group+endTime*block+
+                  degY*endTime+
+                  degZ*block+
+                  deg*correct_response+deg*endTime+
+                  Gender*block+Experience*block+
+                  (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+mDegYTime2.summary=modelSummary(mDegYTime2,0)
+mDegYTime3=lmer(reactionTime~endTime*group+endTime*block+
+                  degY*endTime+
+                  degZ*block+
+                  deg*correct_response+deg*endTime+
+                  Gender*block+Experience*block+
+                  (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+mDegYTime3.summary=modelSummary(mDegYTime3)
+#degree*time*side
+mDegTimeSide=lmer(reactionTime~degY*endTime*block*group+
+                    degZ*block+
+                    deg*endTime+deg*correct_response+deg:endTime:correct_response+
+                    Gender*block+Experience*block+
+                    (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+anova(mBase,mDegTimeSide)
 #degY*block*group
 mdegYBlockGroup=lmer(reactionTime~degY*endTime*block*group-degY:block:group+
                        degZ*block+
@@ -72,8 +100,8 @@ mBlock=lmer(reactionTime~degY*endTime*block*group+
 anova(mBlock,mBase)
 #difference between degZ*block and degY*block
 mDegBlock=lmer(reactionTime~degY*endTime*block*group-
-                 degY*block+
-                 deg*block+
+                 degY:block+
+                 degZ*block+
                  deg*correct_response+deg*endTime+
                  Gender*block+Experience*block+
                  (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
