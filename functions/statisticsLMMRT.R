@@ -125,13 +125,8 @@ mExperience=lmer(reactionTime~degY*endTime*block*group+
                (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
 mExperienceNull=update(mExperience, formula = ~ . -Experience)
 anova(mExperience,mExperienceNull)
-#average effect size of block (remove main effects of gender and experience due to nonsignificance)
-mBlockE=lmer(reactionTime~degY*endTime*block*group+
-               degZ*block+
-               deg*correct_response+deg*endTime+
-              (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
-summary(mBlockE)
-mBlockE.summary=modelSummary(mBlockE)
+mExperience.summary=modelSummary(mExperience)
+save(mGender.summary,mExperience.summary,file="statmodels/RTmGenderExperience.RData")
 
 
 
