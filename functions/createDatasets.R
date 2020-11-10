@@ -89,48 +89,54 @@ dataset.acc.Training$deg=dataset.acc.Training$deg-mean(dataset.acc.Training$deg)
 dataset.TrainingButtonsWheel=dataset.acc.Training[which(dataset.acc.Training$group!="visual"),]
 
 ##Plots
+#plot block*group interaction over time for pre/posttest
+myData$cond=paste(myData$group,myData$block,sep="*")
+myData$condShape=myData$group
+myData$condLinetype=myData$block
+myData$condColor=myData$group
+generateTableAndGraphsForCondition(myData,"BlockGroup",TRUE,TRUE,list(color="group",shape="group",linetype="block"))
 #plot pre-post difference
 myDataPlots=myData
 myDataPlots$cond=myDataPlots$group
-myDataPlots$condForLineTypes=myDataPlots$group
+myDataPlots$condLinetype=myDataPlots$group
 myDataPlots$cond2=ifelse(myDataPlots$block=="postTest",0,1)
-generateTableAndGraphsForCondition(myDataPlots,"datasetPrePost",TRUE,FALSE,"Group",TRUE)
-#plot block*group interaction over time for pre/posttest
-myData$cond=paste(myData$group,myData$block,sep="*")
-myData$condForLineTypes=myData$group
-generateTableAndGraphsForCondition(myData,"datasetTime",TRUE,TRUE,"Group",TRUE)
+generateTableAndGraphsForCondition(myDataPlots,"datasetPrePost",TRUE,FALSE,list(color="group",shape="group",linetype="group"))
 #plot axis differences for pre/posttest
 myData$cond=paste(myData$axis,myData$block,sep="*")
-myData$condForLineTypes=myData$axis
-generateTableAndGraphsForCondition(myData,"AxisBlock",TRUE,TRUE,"Axis",TRUE)
+myData$condShape=myData$axis
+myData$condLinetype=myData$block
+myData$condColor=myData$axis
+generateTableAndGraphsForCondition(myData,"AxisBlock",TRUE,TRUE,list(color="axis",shape="axis",linetype="block"))
+#plot side differences
+myData$cond=myData$correct_response
+myData$condShape=myData$correct_response
+myData$condLinetype=myData$correct_response
+myData$condColor=myData$correct_response
+generateTableAndGraphsForCondition(myData,"side",TRUE,TRUE,list(color="side",shape="side",linetype="side"))
 
 #plot groups over time for training
 myDataTraining$cond=factor(myDataTraining$group)
-generateTableAndGraphsForCondition(myDataTraining,"TrainingGroup",TRUE,TRUE,"none")
+generateTableAndGraphsForCondition(myDataTraining,"TrainingGroup",TRUE,TRUE,list(pos="none"))
 #plot firstDeviationTime instead of reaction Time
 myDataTraining$reactionTime2=myDataTraining$reactionTime
 myDataTraining$reactionTime=myDataTraining$firstDeviationTime
-generateTableAndGraphsForCondition(myDataTraining[which(myDataTraining$group!="visual"),],"TrainingGroupPlanningTime",TRUE,TRUE,"none",ylab="Planning Time(ms)")
+generateTableAndGraphsForCondition(myDataTraining[which(myDataTraining$group!="visual"),],"TrainingGroupPlanningTime",TRUE,TRUE,list(pos="none"),ylab="Planning Time(ms)")
 #plot time from first allowed answer until actual reaction
 myDataTraining$reactionTime=myDataTraining$reactionTime2-myDataTraining$firstAllowedAnswerTime
-generateTableAndGraphsForCondition(myDataTraining,"TrainingGroupComparisonTime",TRUE,TRUE,"none",ylab="Comparison Time(ms)")
+generateTableAndGraphsForCondition(myDataTraining,"TrainingGroupComparisonTime",TRUE,TRUE,list(pos="none"),ylab="Comparison Time(ms)")
 #plot rotationSpeed instead of reaction Time
 myDataTraining$reactionTime=abs(myDataTraining$rotationSpeed)
-generateTableAndGraphsForCondition(myDataTraining[which(myDataTraining$group!="visual"),],"TrainingGroupRotationSpeed",TRUE,TRUE,"none",ylab="Rotation speed (°/s)")
+generateTableAndGraphsForCondition(myDataTraining[which(myDataTraining$group!="visual"),],"TrainingGroupRotationSpeed",TRUE,TRUE,list(pos="none"),ylab="Rotation speed (°/s)")
 #plot numberOfSwitches instead of reaction Time
 myDataTraining$reactionTime=myDataTraining$numberOfSwitches
-generateTableAndGraphsForCondition(myDataTraining[which(myDataTraining$group!="visual"),],"TrainingGroupNumberOfSwitches",TRUE,TRUE,"none",ylab="Number of switches")
+generateTableAndGraphsForCondition(myDataTraining[which(myDataTraining$group!="visual"),],"TrainingGroupNumberOfSwitches",TRUE,TRUE,list(pos="none"),ylab="Number of switches")
 #plot short direction proportion
 ggplot(unique(myData[which(myData$group!="visual"),c("ID","shortDirectionPropByID","group")]),aes(shortDirectionPropByID,fill=group)) + 
   geom_histogram(binwidth=0.05, position='identity', alpha=0.6) +
   xlab("Proportion of rotations in short direction") + ylab("Number of participants") + 
-  theme_bw()+theme(legend.position = "none") + scale_colour_discrete(drop=TRUE,limits = levels(myDataTraining$cond)) + 
+  theme_classic()+theme(legend.position = "none") + scale_colour_discrete(drop=TRUE,limits = levels(myDataTraining$cond)) + 
   scale_fill_discrete(drop=TRUE,limits = levels(myDataTraining$cond))
 ggsave(paste("figs/MR/TrainingPropShortDirectionHistogram.png",sep=""))
-
-#plot side differences
-myData$cond=myData$correct_response
-generateTableAndGraphsForCondition(myData,"side")
 
 #combine multiple plots into one
 #quite slow, other programs are probably better suited
