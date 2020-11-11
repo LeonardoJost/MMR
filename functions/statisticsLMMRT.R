@@ -72,8 +72,8 @@ mBlock=lmer(reactionTime~degY*endTime*block*group+
 anova(mBlock,mBase)
 #difference between degZ*block and degY*block
 mDegBlock=lmer(reactionTime~degY*endTime*block*group-
-                 degY*block+
-                 deg*block+
+                 degY:block+
+                 degZ*block+
                  deg*correct_response+deg*endTime+
                  Gender*block+Experience*block+
                  (deg+endTime+block|ID)+(1|modelNumber),data=dataset.rt,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
@@ -99,7 +99,10 @@ mExperienceNull=update(mExperience, formula = ~ . -Experience)
 anova(mExperience,mExperienceNull)
 mExperience.summary=modelSummary(mExperience)
 save(mGender.summary,mExperience.summary,file="statmodels/RTmGenderExperience.RData")
-
+#side
+mSide=update(mBase, formula = ~ . -correct_response)
+anova(mBase,mSide)
+mExpBlock=update(mBase, formula = ~ . -Experience:block)
 
 
 #split pre- and posttest
