@@ -58,6 +58,7 @@ mTrainedModels4=lmer(reactionTime~endTime*group+degY*group+
                        (deg+endTime|ID)+(1|modelNumber),
                      data=dataset.rt.postTest,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
 anova(mPostTest,mTrainedModels,mTrainedModels2,mTrainedModels3,mTrainedModels4)
+anova(mTrainedModels2,mTrainedModels4)
 anova(mTrainedModels3,mTrainedModels4)
 mTrainedModels4.summary=modelSummary(mTrainedModels4)
 save(mTrainedModels4,mTrainedModels4.summary,file="statmodels/RTmTrainedModels.RData")
@@ -193,3 +194,22 @@ mTrainingEffects11.summary=modelSummary(mTrainingEffects11)
 #allsignificant
 plot(mTrainingEffects11)
 save(mTrainingEffects11,mTrainingEffects11.summary,file="statmodels/RTmTrainingEffects.RData")
+#main effect of Ntraining
+mTrainingEffectsNTraining=lmer(reactionTime~endTime*group+degY*group+
+                                 deg*correct_response+deg*endTime+
+                                 shortDirectionPropByID*group+
+                                 numberOfTrainingTrialsByID+
+                                 numberOfPretestTrialsByID+
+                                 (deg+endTime|ID)+(1|modelNumber),
+                               data=dataset.rt.postTest,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+mTrainingEffectsNTrainingNull=update(mTrainingEffectsNTraining,.~.-numberOfTrainingTrialsByID)
+anova(mTrainingEffectsNTrainingNull,mTrainingEffectsNTraining)
+#effect of npretest*group
+mTrainingEffectsNPretestGroup=lmer(reactionTime~endTime*group+degY*group+
+                                 deg*correct_response+deg*endTime+
+                                 shortDirectionPropByID*group+
+                                 numberOfTrainingTrialsByID*group+
+                                 numberOfPretestTrialsByID*group+
+                                 (deg+endTime|ID)+(1|modelNumber),
+                               data=dataset.rt.postTest,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+anova(mTrainingEffects11,mTrainingEffectsNPretestGroup)

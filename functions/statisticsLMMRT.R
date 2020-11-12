@@ -127,7 +127,10 @@ mExperienceNull=update(mExperience, formula = ~ . -Experience)
 anova(mExperience,mExperienceNull)
 mExperience.summary=modelSummary(mExperience)
 save(mGender.summary,mExperience.summary,file="statmodels/RTmGenderExperience.RData")
-
+#side
+mSide=update(mBase, formula = ~ . -correct_response)
+anova(mBase,mSide)
+mExpBlock=update(mBase, formula = ~ . -Experience:block)
 
 
 #split pre- and posttest
