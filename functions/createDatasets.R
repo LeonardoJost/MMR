@@ -73,20 +73,8 @@ dataset.acc$degZ=dataset.acc$degZ-mean(dataset.acc$degZ)
 #split pre- and posttest data
 dataset.rt.preTest=dataset.rt[which(dataset.rt$block=="preTest"),]
 dataset.rt.postTest=dataset.rt[which(dataset.rt$block=="postTest"),]
-
-#training data
-datasetForLMMTraining=myDataTraining
-#scaling
-datasetForLMMTraining$deg=datasetForLMMTraining$deg/100
-datasetForLMMTraining$endTime=datasetForLMMTraining$endTime/30 #30 minutes (time is already in minutes)
-#prepare dataset
-dataset.noOutlier.Training=datasetForLMMTraining[which(!datasetForLMMTraining$outlier),]
-dataset.acc.Training=dataset.noOutlier.Training
-dataset.rt.Training=dataset.noOutlier.Training[which(dataset.noOutlier.Training$typeOutlier=="hit"),]
-#center degree
-dataset.rt.Training$deg=dataset.rt.Training$deg-mean(dataset.rt.Training$deg) 
-dataset.acc.Training$deg=dataset.acc.Training$deg-mean(dataset.acc.Training$deg)
-dataset.TrainingButtonsWheel=dataset.acc.Training[which(dataset.acc.Training$group!="visual"),]
+#for training analysis: do not analyze shortDirectionPropByID for visual group (always 1)
+dataset.rt.postTest$shortDirectionPropByID[which(dataset.rt.postTest$group=="visual")]=0
 
 ##Plots
 #plot block*group interaction over time for pre/posttest

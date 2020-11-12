@@ -194,12 +194,22 @@ mTrainingEffects11.summary=modelSummary(mTrainingEffects11)
 #allsignificant
 plot(mTrainingEffects11)
 save(mTrainingEffects11,mTrainingEffects11.summary,file="statmodels/RTmTrainingEffects.RData")
-
+#main effect of Ntraining
 mTrainingEffectsNTraining=lmer(reactionTime~endTime*group+degY*group+
                                  deg*correct_response+deg*endTime+
                                  shortDirectionPropByID*group+
-                                 numberOfTrainingTrialsByID*group+
-                                 numberOfPretestTrialsByID-numberOfTrainingTrialsByID+
+                                 numberOfTrainingTrialsByID+
+                                 numberOfPretestTrialsByID+
                                  (deg+endTime|ID)+(1|modelNumber),
                                data=dataset.rt.postTest,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
-anova(mTrainingEffects11,mTrainingEffectsNTraining)
+mTrainingEffectsNTrainingNull=update(mTrainingEffectsNTraining,.~.-numberOfTrainingTrialsByID)
+anova(mTrainingEffectsNTrainingNull,mTrainingEffectsNTraining)
+#effect of npretest*group
+mTrainingEffectsNPretestGroup=lmer(reactionTime~endTime*group+degY*group+
+                                 deg*correct_response+deg*endTime+
+                                 shortDirectionPropByID*group+
+                                 numberOfTrainingTrialsByID*group+
+                                 numberOfPretestTrialsByID*group+
+                                 (deg+endTime|ID)+(1|modelNumber),
+                               data=dataset.rt.postTest,REML=FALSE,control = lmerControl(optimizer = "optimx",optCtrl = list(method = "bobyqa")))
+anova(mTrainingEffects11,mTrainingEffectsNPretestGroup)
