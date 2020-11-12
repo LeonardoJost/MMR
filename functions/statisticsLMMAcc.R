@@ -60,3 +60,18 @@ aBlockXGroup=glmer((type=="hit")~endTime*block+
 anova(aBase,aBlockXGroup)
 aBlockXGroup.summary=modelSummary(aBlockXGroup)
 save(aBlock,aGender.summary,aExperience.summary,aBlockXGroup.summary,file="statmodels/AccModelComparison.RData")
+#gender*block
+aGenderBlock=update(aBase, formula = ~ . +Gender:block)
+anova(aBase,aGenderBlock)
+#experience*block
+aExperienceBlock=update(aBase, formula = ~ . +Experience:block)
+anova(aBase,aExperienceBlock)
+#deg*time*side
+aDegTimeSide=update(aBase, formula = ~ . +deg:endTime:correct_response)
+anova(aBase,aDegTimeSide)
+#deg*time*side
+aDegSide=update(aBase, formula = ~ . +deg:correct_response)
+anova(aBase,aDegSide)
+#deg*time*side
+aDegTime=update(aBase, formula = ~ . +deg:endTime)
+anova(aBase,aDegTime)
