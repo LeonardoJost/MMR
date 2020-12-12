@@ -60,7 +60,7 @@ generateTableAndGraphsForCondition=function(MRData,conditionString,degreeGraphs=
   #generate plots
   if (degreeGraphs) {
     #all data
-    generateGraphs(MRData,paste("MR/allData/",conditionString,sep=""),legendProp,ylab)
+    #generateGraphs(MRData,paste("MR/allData/",conditionString,sep=""),legendProp,ylab)
     #average by participants
     generateGraphs(MRDataMeansByIDDegcond,paste("MR/meanData/",conditionString,sep=""),legendProp,ylab)
     #accuracy is always only for averages
