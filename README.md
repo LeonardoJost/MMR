@@ -6,7 +6,7 @@ Code is based on the code at https://github.com/LeonardoJost/MRExperiment
 A linked OSF project is at https://osf.io/hxa2s/
 
 ## Conducting the Experiment
-The code in this repository contains bugfixes (in the original version, the stimuli in the visual condition were already turned 3°). The version used in the experiment is available in the osf project.
+The code in this repository contains bugfixes (in the original version, the stimuli in the visual condition were already turned 3°). The version used in the experiment is available as 'Mental Manual RotationOV.osexp'.
 The experiment is programmed for use with a steering wheel. The experiment was conducted using a Thrustmaster T150RS and the settings are chosen accordingly.
 The experiment contains a pre and post test and three possible training conditions in between and a questionaire after all tests.
 ### OpenSesame
