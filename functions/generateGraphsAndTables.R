@@ -89,7 +89,7 @@ generateGraphs=function(dataset,title,legendProp=list(),ylab="Reaction time(ms)"
     scale_colour_discrete(drop=TRUE,limits = levels(dataset$condColor)) + 
     scale_linetype_discrete(drop=TRUE,limits = levels(dataset$condLinetype)) + 
     scale_shape_discrete(drop=TRUE,limits = levels(dataset$condShape))
-  ggsave(paste("figs/",title,"LinePlotByCondDegree.png",sep=""))
+  ggsave(paste("figs/",title,"LinePlotByCondDegree.tiff",sep=""))
 }
 
 #generate lins graphs by time
@@ -105,7 +105,7 @@ generateLineGraphsByTime=function(dataset,title,legendProp=list(),ylab="Reaction
     scale_colour_discrete(drop=TRUE,limits = levels(dataset$condColor)) + 
     scale_linetype_discrete(drop=TRUE,limits = levels(dataset$condLinetype)) + 
     scale_fill_discrete(drop=TRUE,limits = levels(dataset$condColor))
-  ggsave(paste("figs/",title,"LinePlotByCondTime.png",sep=""))
+  ggsave(paste("figs/",title,"LinePlotByCondTime.tiff",sep=""))
   #plot again with linear smoothing
   ggplot(dataset,aes(y=reactionTime,x=endTime, color=condColor, linetype=condLinetype)) + 
     geom_smooth(aes(fill=condColor),method="lm") +
@@ -114,7 +114,7 @@ generateLineGraphsByTime=function(dataset,title,legendProp=list(),ylab="Reaction
     scale_colour_discrete(drop=TRUE,limits = levels(dataset$condColor)) + 
     scale_linetype_discrete(drop=TRUE,limits = levels(dataset$condLinetype)) + 
     scale_fill_discrete(drop=TRUE,limits = levels(dataset$condColor))
-  ggsave(paste("figs/",title,"LinePlotByCondTimeLinear.png",sep=""))
+  ggsave(paste("figs/",title,"LinePlotByCondTimeLinear.tiff",sep=""))
 }
 
 #generate graphs for accuracy
@@ -134,7 +134,7 @@ generateAccGraphs=function(dataset,title,legendProp=list()) {
     scale_colour_discrete(drop=TRUE,limits = levels(dataset$condColor)) + 
     scale_linetype_discrete(drop=TRUE,limits = levels(dataset$condLinetype)) + 
     scale_shape_discrete(drop=TRUE,limits = levels(dataset$condShape))
-  ggsave(paste("figs/",title,"LinePlotByCondDegree.png",sep=""))
+  ggsave(paste("figs/",title,"LinePlotByCondDegree.tiff",sep=""))
 }
 
 #calculate means and mode for questionaire data and save to csv
@@ -174,22 +174,25 @@ calculateMeansQuestionaire=function(verbose,questionaireData,questionaireOutFile
 
 #combine multiple images into one
 combineImages=function(imagesList,rows,columns,outputFile,outputWidth=1028){
-  library(png) #for reading in PNGs
-  # setup plot
-  par(mai=rep(0,4)) # no margins
-  
-  # layout the plots into a matrix
-  layout(matrix(1:(rows*columns), ncol=columns, byrow=TRUE))
-  
-  # do the plotting
-  for(i in 1:(rows*columns)) {
-    img =readPNG(imagesList[i])
-    plot(NA,xlim=0:1,ylim=0:1,bty="n",axes=0,xaxs = 'i',yaxs='i')
-    rasterImage(img,0,0,1,1)
+  library(magick)
+  initImage=image_read(imagesList[1])
+  #each row contains columns images
+  imageRows=rep(initImage,columns)
+  imageColumns=rep(initImage,rows)
+  #combine images in rows and columns
+  counter=1
+  for(i in 1:rows){
+    for(j in 1:columns){
+      imageRows[j]=image_read(imagesList[counter])
+      counter=counter+1
+    }
+    #append horizontally
+    imageRow=image_append(imageRows)
+    imageColumns[i]=imageRow
   }
-  
-  # write to new image
-  dev.print(png,outputFile,width=outputWidth*columns,height=outputWidth*rows)
-  dev.off()
+  #append vertically
+  image=image_append(imageColumns,stack=TRUE)
+  #save
+  image_write(image, path = outputFile)
   gc()
 }

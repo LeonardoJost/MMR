@@ -124,16 +124,16 @@ ggplot(unique(myData[which(myData$group!="visual"),c("ID","shortDirectionPropByI
   xlab("Proportion of rotations in short direction") + ylab("Number of participants") + 
   theme_classic()+theme(legend.position = "none") + scale_colour_discrete(drop=TRUE,limits = levels(myDataTraining$cond)) + 
   scale_fill_discrete(drop=TRUE,limits = levels(myDataTraining$cond))
-ggsave(paste("figs/MR/TrainingPropShortDirectionHistogram.png",sep=""))
+ggsave(paste("figs/MR/TrainingPropShortDirectionHistogram.tiff",sep=""))
 
 #combine multiple plots into one
 #quite slow, other programs are probably better suited
-imagesList=c("figs/MR/accData/TrainingGroupLinePlotByCondDegree.png",
-             "figs/MR/meanData/TrainingGroupLinePlotByCondDegree.png",
-             "figs/MR/Timed/TrainingGroupLinePlotByCondTime.png",
-             "figs/MR/Timed/TrainingGroupPlanningTimeLinePlotByCondTime.png",
-             "figs/MR/Timed/TrainingGroupRotationSpeedLinePlotByCondTime.png",
-             "figs/MR/Timed/TrainingGroupNumberOfSwitchesLinePlotByCondTime.png",
-             "figs/MR/Timed/TrainingGroupComparisonTimeLinePlotByCondTime.png",
-             "figs/MR/TrainingPropShortDirectionHistogram.png")
-combineImages(imagesList,rows=2,columns=4,"figs/combined.png")
+imagesList=c("figs/MR/accData/TrainingGroupLinePlotByCondDegree.tiff",
+             "figs/MR/meanData/TrainingGroupLinePlotByCondDegree.tiff",
+             "figs/MR/Timed/TrainingGroupLinePlotByCondTime.tiff",
+             "figs/MR/Timed/TrainingGroupPlanningTimeLinePlotByCondTime.tiff",
+             "figs/MR/Timed/TrainingGroupRotationSpeedLinePlotByCondTime.tiff",
+             "figs/MR/Timed/TrainingGroupNumberOfSwitchesLinePlotByCondTime.tiff",
+             "figs/MR/Timed/TrainingGroupComparisonTimeLinePlotByCondTime.tiff",
+             "figs/MR/TrainingPropShortDirectionHistogram.tiff")
+combineImages(imagesList,rows=2,columns=4,"figs/combined.tiff")
