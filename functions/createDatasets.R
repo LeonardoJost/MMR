@@ -17,6 +17,7 @@
 ### functions
 source("functions/helpers.R")
 source("functions/generateGraphsAndTables.R", encoding="utf-8")
+library(ggplot2)
 
 #load full dataset
 myData=read.csv(file="dataset\\dataset.csv",sep=";")
